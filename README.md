@@ -2,6 +2,6 @@
 
 > Learn Python with a series of projects.
 
-| Title                                                   | Got to practice with       |
-| ------------------------------------------------------- | -------------------------- |
-| [Binary Tree](https://repl.it/@borntofrappe/binarytree) | class, list, concatenation |
+| Title                                                   | Brief                                      | Got to practice with       |
+| ------------------------------------------------------- | ------------------------------------------ | -------------------------- |
+| [binary-tree](https://repl.it/@borntofrappe/binarytree) | Draw a maze with the binary tree algorithm | class, list, concatenation |
