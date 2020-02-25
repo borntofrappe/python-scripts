@@ -6,3 +6,4 @@
 | ------------------------------------------------------- | ---------------------------------------------- | -------------------------- |
 | [binary-tree](https://repl.it/@borntofrappe/binarytree) | Draw a maze with the binary tree algorithm     | class, list, concatenation |
 | pong                                                    | Recreate the pong game using the turtle module | turtle, class, game        |
+| bubble-pop                                              | Build a clone of space invaders with pygame    | pygame, dict, list, class  |
