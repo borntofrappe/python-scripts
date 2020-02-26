@@ -61,6 +61,28 @@ icon = pygame.image.load("icon.png")
 pygame.display.set_icon(icon)
 
 
+score = 0
+font_large = pygame.font.Font('Aldrich-Regular.ttf', 28)
+font_medium = pygame.font.Font('Aldrich-Regular.ttf', 20)
+
+
+def show_score(score):
+    label = font_large.render("Score", True, (255, 255, 255))
+    label_rect = label.get_rect()
+    x = game["width"] - 10
+    y = 10
+    label_rect.right = x
+    label_rect.top = y
+
+    text = font_medium.render(str(score), True, (255, 255, 255))
+    text_rect = text.get_rect()
+    text_rect.right = x
+    text_rect.top = y + 30
+
+    screen.blit(label, label_rect)
+    screen.blit(text, text_rect)
+
+
 # cheeky way to update the integer position at a slower rate
 speed = 0
 # game loop
@@ -141,11 +163,13 @@ while running:
                 if bullet.x > enemy.x - enemy.r and bullet.x < enemy.x + enemy.r and bullet.y < enemy.y + enemy.r and bullet.y > enemy.y - enemy.r:
                     bullets.remove(bullet)
                     index = enemies.index(enemy)
+                    score += len(enemies) - index
                     for i in range(len(enemies) - index):
                         enemies.pop()
                 if len(enemies) == 0:
                     squadron.remove(enemies)
                     add_enemies()
+                    score += 5
     # enemies
     for enemies in squadron:
         for enemy in enemies:
@@ -162,5 +186,7 @@ while running:
 
             pygame.draw.circle(screen, enemy.color, [
                 enemy.x, enemy.y], enemy.r, enemy.w)
+
+    show_score(score)
 
     pygame.display.update()
