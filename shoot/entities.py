@@ -13,7 +13,7 @@ class Player(Circle):
         super().__init__(x, y, r, w)
         self.is_moving = False
         self.dx = 2
-        self.bullets = 3
+        self.bullets = 2
 
     def move(self):
         self.is_moving = True
@@ -52,9 +52,9 @@ inherit from Circle to create a shape moving horizontally and vertically when th
 
 
 class Enemy(Circle):
-    def __init__(self, x, y, r=15, w=5):
+    def __init__(self, x, y, r=20, w=0, dx=1):
         super().__init__(x, y, r, w)
-        self.dx = 1
+        self.dx = dx
         self.dy = 30
 
     def bounce(self):
