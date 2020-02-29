@@ -1,8 +1,6 @@
 # Snake
 
-> notes jotted down developing the project
->
-> in increments and verbose syntax
+> notes jotted down developing the project, without much rhyme, but hopefully enough reason
 
 ## Getting started
 
@@ -343,12 +341,149 @@ def set_direction(self, x, y):
     self.direction = (x, y)
 ```
 
-## Snake and Appendages
+## Appendages
 
-The challenge in how to have successive shapes move where the previous one was. To this end, I use a list to store the coordinates of the snake.
+The challenge in how to have successive shapes move where the previous one was. To this end, I use a list to store the different parts of the snake.
 
-- [x] add squares to the snake <!-- I DID IT!!!!! -->
+I created a separate class for this collection, but I might go back and revisit the code's structure.
 
-- [ ] explain the appendages class and how the squares are updated
+```py
+class Appendage():
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.color = (40, 150, 40)
 
-- [ ] detect collision between snake parts
+    def draw(self, screen):
+        x = self.x * self.w
+        y = self.y * self.h
+        pygame.draw.rect(screen, self.color, (x, y, self.w, self.h))
+
+    def move(self, x, y):
+        self.x = x
+        self.y = y
+```
+
+Similar to the snake, it is set up with a width, height, and a definite position. Unlike the snake however, it is not supposed tp move on its own. so there's no boolean dictating whether or not it should move, or the tuple describing the direction.
+
+In `run_game` set up a list to collect the different parts.
+
+```py
+def run_game():
+    appendages = []
+```
+
+When the snake overlaps with the fruit then, create a new instance of the appendage class. First off, using the coordinates of the snake.
+
+```py
+if snake.overlaps(fruit):
+    appendage = Appendage(snake.x, snake.y, w, h)
+    appendages.append(appendage)
+```
+
+To show the shape, draw the objects using the familiar `draw` function.
+
+```py
+fruit.draw(screen)
+snake.draw(screen)
+for appendage in appendages:
+    appendage.draw(screen)
+```
+
+To actually move them however, update the block where the snake's movement is described.
+
+```py
+if snake.overlaps(fruit):
+    # add appendage
+
+if snake.is_moving:
+    # update appendage
+    # update snake
+```
+
+The position of the block, and the order of the update functions, matters a lot. This is because I want to:
+
+- create the appendage
+
+- update the position of the appendages on the basis of the snake
+
+- update the snake on the basis of the chosen direction
+
+In that specific order.
+
+```py
+if snake.is_moving:
+    if len(appendages) > 0:
+        appendage[0].move(snake.x, snake.y)
+
+    # update snake
+```
+
+This works, but only for the first appendage. For later appendages, restructure the code to refer not to the snake, but previous instances of the appendage class.
+
+In the overlapping if statement.
+
+```py
+if snake.overlaps(fruit):
+    fruit = Fruit(columns, rows, w, h)
+    # refer to the snake
+    if len(appendages) == 0:
+        appendage = Appendage(snake.x, snake.y, w, h)
+        appendages.append(appendage)
+    # refer to previous appendages
+    else:
+        appendage = Appendage(
+            appendages[len(appendages) - 1].x, appendages[len(appendages) - 1].y, w, h)
+        appendages.append(appendage)
+```
+
+In the moving if statement.
+
+```py
+if snake.is_moving:
+    if len(appendages) > 0:
+        for i in range(len(appendages) - 1, 0, -1):
+            appendages[i].move(appendages[i - 1].x,
+                                appendages[i - 1].y)
+        appendages[0].move(snake.x, snake.y)
+
+    # update snake
+```
+
+Traverse the list backwards, again because order matters. Looping in ascending order would mean you'd overwrite the coordinates and end up with the appendages on top of each other.
+
+## Overlap/2
+
+The game ends if the snake overlaps with an appendage. The `overlaps()` function actually helps. I updated the name of the input argument, but it's fundamentally the same.
+
+```py
+def overlaps(self, entity):
+    return self.x == entity.x and self.y == entity.y
+```
+
+Later in the game loop.
+
+```py
+for appendage in appendages:
+    if snake.overlaps(appendage):
+        snake.is_moving = False
+        appendages.clear()
+```
+
+Stop the snake and for good measure remove the existing appendages.
+
+Surprisingly enough, it all works.
+
+## Overlap/3
+
+Testing the game, I realized there is a situation in which the appendages overlap with the fruit, hiding it from view. Instead of creating modifying the fruit class to initialize the shape where the snake is not, I can actually detect the overlap and add a new instance.
+
+```py
+for appendage in appendages:
+    if appendage.overlaps(fruit):
+        fruit = Fruit(columns, rows, w, h)
+```
+
+Just need to specify the function on the appendage class. This might warrant a whole discussion on the classes, their structure and possible inheritance.

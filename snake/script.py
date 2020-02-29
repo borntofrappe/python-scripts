@@ -1,7 +1,3 @@
-"""
-WORK_IN_PROGRESS
-"""
-
 import pygame
 import sys
 from random import randint
@@ -15,7 +11,7 @@ class Snake():
         self.h = h
         self.is_moving = False
         self.direction = (1, 0)
-        self.color = (40, 150, 40)
+        self.color = (60, 200, 60)
 
     def draw(self, screen):
         x = self.x * self.w
@@ -26,8 +22,8 @@ class Snake():
         self.x = x
         self.y = y
 
-    def overlaps(self, fruit):
-        return self.x == fruit.x and self.y == fruit.y
+    def overlaps(self, entity):
+        return self.x == entity.x and self.y == entity.y
 
     def set_direction(self, x, y):
         self.direction = (x, y)
@@ -39,7 +35,7 @@ class Appendage():
         self.y = y
         self.w = w
         self.h = h
-        self.color = (40, 170, 40)
+        self.color = (40, 150, 40)
 
     def draw(self, screen):
         x = self.x * self.w
@@ -50,6 +46,9 @@ class Appendage():
         self.x = x
         self.y = y
 
+    def overlaps(self, entity):
+        return self.x == entity.x and self.y == entity.y
+
 
 class Fruit():
     def __init__(self, columns, rows, w, h):
@@ -57,7 +56,7 @@ class Fruit():
         self.y = randint(0, rows - 1)
         self.w = w
         self.h = h
-        self.color = (180, 40, 40)
+        self.color = (200, 50, 50)
 
     def draw(self, screen):
         x = self.x * self.w
@@ -86,8 +85,6 @@ def run_game():
     columns = 20
     rows = 20
 
-    appendages = []
-
     w = width // columns
     h = height // rows
 
@@ -97,6 +94,7 @@ def run_game():
 
     snake = Snake(columns, rows, w, h)
     fruit = Fruit(columns, rows, w, h)
+    appendages = []
 
     while True:
         pygame.time.delay(100)
@@ -155,6 +153,13 @@ def run_game():
             if y < 0:
                 y = rows - 1
             snake.move(x, y)
+
+        for appendage in appendages:
+            if snake.overlaps(appendage):
+                snake.is_moving = False
+                appendages.clear()
+            if appendage.overlaps(fruit):
+                fruit = Fruit(columns, rows, w, h)
 
         draw_grid(screen, width, height, columns, rows)
         fruit.draw(screen)
