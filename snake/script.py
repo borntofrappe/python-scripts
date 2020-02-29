@@ -2,6 +2,8 @@ import pygame
 import sys
 from random import randint
 
+# entities
+
 
 class Snake():
     def __init__(self, columns, rows, w, h):
@@ -64,34 +66,38 @@ class Fruit():
         pygame.draw.rect(screen, self.color, (x, y, self.w, self.h))
 
 
+# utility
 def draw_grid(screen, width, height, columns, rows):
     stroke_width = 1
     w = width // columns
     h = height // rows
     for column in range(columns):
         x = column * w
-        pygame.draw.rect(screen, (200, 200, 200),
+        pygame.draw.rect(screen, (180, 180, 180),
                          (x, 0, w, height), stroke_width)
     for row in range(rows):
         y = row * h
-        pygame.draw.rect(screen, (200, 200, 200),
+        pygame.draw.rect(screen, (180, 180, 180),
                          (0, y, width, h), stroke_width)
 
 
+# game function
 def run_game():
+    # setup
     pygame.init()
     width = 500
     height = 500
     columns = 20
     rows = 20
-
     w = width // columns
     h = height // rows
 
+    # screen and time
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Snake")
     clock = pygame.time.Clock()
 
+    # game entities
     snake = Snake(columns, rows, w, h)
     fruit = Fruit(columns, rows, w, h)
     appendages = []
@@ -99,7 +105,8 @@ def run_game():
     while True:
         pygame.time.delay(100)
         clock.tick(10)
-        screen.fill((20, 20, 20))
+
+        # key bindings
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -125,6 +132,7 @@ def run_game():
                 if event.key == pygame.K_n:
                     fruit = Fruit(columns, rows, w, h)
 
+        # snake-fruit overlap
         if snake.overlaps(fruit):
             fruit = Fruit(columns, rows, w, h)
             if len(appendages) == 0:
@@ -135,6 +143,7 @@ def run_game():
                     appendages[len(appendages) - 1].x, appendages[len(appendages) - 1].y, w, h)
                 appendages.append(appendage)
 
+        # snake & appendages movement
         if snake.is_moving:
             if len(appendages) > 0:
                 for i in range(len(appendages) - 1, 0, -1):
@@ -154,13 +163,19 @@ def run_game():
                 y = rows - 1
             snake.move(x, y)
 
+        # appendage overlap
+        # ! after the snake has had a chance to update itself
         for appendage in appendages:
+            # snake
             if snake.overlaps(appendage):
                 snake.is_moving = False
                 appendages.clear()
+            # fruit
             if appendage.overlaps(fruit):
                 fruit = Fruit(columns, rows, w, h)
 
+        # draw
+        screen.fill((20, 20, 20))
         draw_grid(screen, width, height, columns, rows)
         fruit.draw(screen)
         snake.draw(screen)

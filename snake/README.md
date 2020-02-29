@@ -1,8 +1,8 @@
-# Snake
+# [Snake](https://repl.it/@borntofrappe/snake)
 
 > notes jotted down developing the project, without much rhyme, but hopefully enough reason
 
-## Getting started
+## Screen
 
 Begin by import `pygame` and `sys`. This last one to close the window when a particular key is pressed.
 
@@ -32,7 +32,7 @@ def run_game():
 run_game()
 ```
 
-## Draw Grid
+## Grid
 
 Draw the grid using a hard coded number of columns and rows. Here I use a function to which I pass the surface on which to draw, plus the values to create the grid in the game's window.
 
@@ -117,7 +117,7 @@ while True:
     screen.fill((20, 20, 20))
 ```
 
-## an Integer is required
+## DeprecationWarning
 
 A word of warning from the console: the coordinate `x` seems to actually describe a float. This is because `width / columns` provides a float, and this value is added to `x`. To fix this, use integer division instead.
 
@@ -125,7 +125,7 @@ A word of warning from the console: the coordinate `x` seems to actually describ
 dx = width // columns
 ```
 
-## Snake Class
+## Snake
 
 Now that it works, it's better to rewrite the code to have a class for the snake.
 
@@ -341,7 +341,7 @@ def set_direction(self, x, y):
     self.direction = (x, y)
 ```
 
-## Appendages
+## Appendage(s)
 
 The challenge in how to have successive shapes move where the previous one was. To this end, I use a list to store the different parts of the snake.
 
