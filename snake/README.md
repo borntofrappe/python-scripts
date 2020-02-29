@@ -298,11 +298,41 @@ The biggest hassle however, is that the piece of fruit is not always displayed. 
 
 Using `x` and `y` relative to the grid might be a good idea.
 
-## TODOS
+## Grid x and y
 
-- [ ] consider using `grid_x` and `grid_y`
+I decided to update the `x` and `y` values with the suggested dimensions of the grid. It required a bit of find and replace, but essentially it boils down to:
 
-- [ ] reconsider `stroke_width` and how to center the shapes
+- remove `dx` and `dy`
+
+- define `x` as `randint(0, columns - 1)`, `y` as `randint(0, rows - 1)`
+
+- draw the snake considering the coordinates, but also the size of the columns and rows. Coincidentally, the width/height of the snake.
+
+```py
+def draw(self, screen):
+    x = self.x * self.w
+    y = self.y * self.h
+    pygame.draw.rect(screen, self.color, (x, y, self.w, self.h))
+```
+
+## stroke_width
+
+In trying to center the rectangles in the squares of the grid, I decided to ditch the `draw.line` function and instead repeat the rectangular shape.
+
+This means the grid lines are thicker, but at least the shapes don't stretch/overlap the edges of the grid cells.
+
+```py
+def draw_grid(screen, width, height, columns, rows):
+    stroke_width = 1
+    w = width // columns
+    h = height // rows
+    for column in range(columns):
+        x = column * w
+        pygame.draw.rect(screen, (200, 200, 200),
+                         (x, 0, w, height), stroke_width)
+    # similar considerations for the rows
+
+```
 
 - [ ] add a square to the snake...somehow
 
