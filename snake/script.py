@@ -33,6 +33,24 @@ class Snake():
         self.direction = (x, y)
 
 
+class Appendage():
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.color = (40, 170, 40)
+
+    def draw(self, screen):
+        x = self.x * self.w
+        y = self.y * self.h
+        pygame.draw.rect(screen, self.color, (x, y, self.w, self.h))
+
+    def move(self, x, y):
+        self.x = x
+        self.y = y
+
+
 class Fruit():
     def __init__(self, columns, rows, w, h):
         self.x = randint(0, columns - 1)
@@ -67,6 +85,8 @@ def run_game():
     height = 500
     columns = 20
     rows = 20
+
+    appendages = []
 
     w = width // columns
     h = height // rows
@@ -107,7 +127,23 @@ def run_game():
                 if event.key == pygame.K_n:
                     fruit = Fruit(columns, rows, w, h)
 
+        if snake.overlaps(fruit):
+            fruit = Fruit(columns, rows, w, h)
+            if len(appendages) == 0:
+                appendage = Appendage(snake.x, snake.y, w, h)
+                appendages.append(appendage)
+            else:
+                appendage = Appendage(
+                    appendages[len(appendages) - 1].x, appendages[len(appendages) - 1].y, w, h)
+                appendages.append(appendage)
+
         if snake.is_moving:
+            if len(appendages) > 0:
+                for i in range(len(appendages) - 1, 0, -1):
+                    appendages[i].move(appendages[i - 1].x,
+                                       appendages[i - 1].y)
+                appendages[0].move(snake.x, snake.y)
+
             x = snake.x + snake.direction[0]
             y = snake.y + snake.direction[1]
             if x > columns - 1:
@@ -120,12 +156,11 @@ def run_game():
                 y = rows - 1
             snake.move(x, y)
 
-        if snake.overlaps(fruit):
-            fruit = Fruit(columns, rows, w, h)
-
         draw_grid(screen, width, height, columns, rows)
         fruit.draw(screen)
         snake.draw(screen)
+        for appendage in appendages:
+            appendage.draw(screen)
 
         pygame.display.flip()
 

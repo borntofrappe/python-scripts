@@ -334,6 +334,21 @@ def draw_grid(screen, width, height, columns, rows):
 
 ```
 
-- [ ] add a square to the snake...somehow
+## set_direction
+
+Almost forgot. Instead of assigning a tuple on the `direction` of the snake directly, I created a setter function.
+
+```py
+def set_direction(self, x, y):
+    self.direction = (x, y)
+```
+
+## Snake and Appendages
+
+The challenge in how to have successive shapes move where the previous one was. To this end, I use a list to store the coordinates of the snake.
+
+- [x] add squares to the snake <!-- I DID IT!!!!! -->
+
+- [ ] explain the appendages class and how the squares are updated
 
 - [ ] detect collision between snake parts
