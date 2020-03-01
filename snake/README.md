@@ -487,3 +487,55 @@ for appendage in appendages:
 ```
 
 Just need to specify the function on the appendage class. This might warrant a whole discussion on the classes, their structure and possible inheritance.
+
+---
+
+## Lessons Learned
+
+After coding the game, I went and watched [the tutorial](https://www.youtube.com/watch?v=XGf2GcyHPhc&feature=youtu.be&t=2739) on [freeCodeCamp YouTube channel](https://www.youtube.com/channel/UC8butISFwT-Wl7EV0hUK0BQ).
+
+I don't intend to modify the code, as I actually prefer my own version, but here's a couple of notes jotted down from the video.
+
+### [enumerate](https://docs.python.org/3/library/functions.html#enumerate)
+
+In a for loop use the `enumerate` syntax to have a reference not only to the items in a list, but also their index.
+
+```py
+list = ["up", "right", "down", "left"]
+for tuple in enumerate(list):
+    print tuple
+
+# (0, 'up')
+# (1, 'right')
+# (2, 'down')
+# (3, 'left')
+```
+
+## [filter](https://docs.python.org/3/library/functions.html#filter) and [lambda expressions](https://docs.python.org/3/tutorial/controlflow.html?highlight=lambda#lambda-expressions)
+
+The filter function allows to filter a list depending on the return value of a function, passed as the first argument.
+
+```py
+def greater_than_zero(n):
+    return n > 0
+
+
+nums = [1, 4, -2, -6, 8, 5, 3, -3]
+list_filtered = filter(greater_than_zero, nums)
+print(list_filtered)
+```
+
+It actually returns a filter object, but you can make a list out of it pretty succinctly.
+
+```py
+list_filtered = list(filter(greater_than_zero, nums))
+print(list_filtered)
+# [1, 4, 8, 5, 3]
+```
+
+Instead of defining the function however, you can also use a lambda expression. Directly in the filter function.
+
+```py
+list_filtered = list(filter(lambda x: x > 0, nums))
+print(list_filtered)
+```
