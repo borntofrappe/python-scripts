@@ -1,58 +1,31 @@
 class Grid:
     def __str__(self):
-        grid = self.grid
-        grid_transposed = [[row[i] for row in grid] for i in range(len(grid))]
-        output = ""
-        for row in grid_transposed:
-            output += "|"
+        # ! prefer an odd number
+        spaces = 3
+        grid = ""
+        # pipes
+        for row in self.grid:
+            grid += "|"
             for cell in row:
-                output = output + str(cell).center(3, " ") + "|"
-            output += "\n"
+                grid += cell.center(spaces, " ") + "|"
+            grid += "\n"
 
-        output += " "
-        for x in range(self.columns):
-            output += str(x).center(4, " ")
-        return output
+        # dashes
+        grid += " " + ("-" * spaces + " ") * self.columns
 
-    def make_grid(self, columns, rows):
-        return [[" " for x in range(columns)] for y in range(rows)]
+        # nums
+        grid += "\n "
+        for c in range(self.columns):
+            grid += str(c).center(spaces + 1, " ")
+        return grid
 
     def __init__(self, columns, rows):
         self.columns = columns
         self.rows = rows
-        self.grid = self.make_grid(self.columns, self.rows)
-
-    def empty_grid(self):
-        self.grid = self.make_grid(self.columns, self.rows)
-
-    def select_column(self, x, player="R"):
-        column = self.grid[x]
-        try:
-            index = list(reversed(column)).index(" ")
-            column[len(column) - index - 1] = player
-        except ValueError:
-            print("Not found")
+        self.grid = [[" " for c in range(columns)] for r in range(rows)]
 
 
 columns = 5
-rows = 5
+rows = 4
 grid = Grid(columns, rows)
-
-players = ["R", "Y"]
-are_playing = True
-player = "R"
-while(are_playing):
-    print(grid)
-    print()
-    print("Player: " + player)
-    selection = input("Select column: ").rstrip()
-    if(selection == "q"):
-        are_playing = False
-        break
-    print()
-    grid.select_column(int(selection), player)
-
-    if player == "R":
-        player = "Y"
-    else:
-        player = "R"
+print(grid)
