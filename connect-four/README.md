@@ -73,7 +73,7 @@ class Grid:
 
 To create the grid, I would ordinarily use a for loop, but having learned about [list comprehensions](https://docs.python.org/3/tutorial/datastructures.html?highlight=comprehension#list-comprehensions), I decided to give the syntax a try.
 
-### List Comprehension(s)
+### List comprehension
 
 With a for loop, create a list as follows:
 
@@ -250,3 +250,207 @@ print(grid)
 ```
 
 I would add a variable to describe the number of spaces between cells, instead of using hard-coded integers, overall I'm pretty satisfied with the end result.
+
+### Class methods
+
+The idea is to use a method to add a letter at the bottom of the grid. I would also need a method to empty the grid, but that's easier to implement.
+
+```py
+class Grid:
+  # re-initialize grid
+  def clear(self):
+    self.grid = [[" " for c in range(self.columns)] for r in range(self.rows)]
+
+```
+
+For the method adding the letter, a bit more haggling is necessary. The goal is to call this method as follows:
+
+```py
+grid.add_to_column(3, "R")
+```
+
+And have it fill the column with the specified input. Starting from the bottom, and using the first empty space in the column itself.
+
+```
+|   |   |   |   |
+|   |   |   |   |
+|   |   |   | R |
+ --- --- --- ---
+  0   1   2   3
+```
+
+### List comprehension/2
+
+The documentation for [nested list comprehensions](https://docs.python.org/3/tutorial/datastructures.html?highlight=comprehension#nested-list-comprehensions) actually described something very helpful in this regard: how to _transpose_ a matrix. The idea is to describe a grid through its columns, so to have easier access to the cells in order.
+
+Let me repeat the "for loop" first, "list comprehension" later approach, just to understand the syntax.
+
+With a for loop:
+
+```py
+grid = [
+  [1, 2, 3],
+  [4, 5, 6]
+]
+grid_transposed = []
+
+rows = len(grid)
+columns = len(grid[0])
+
+for c in range(columns):
+  column = []
+  for r in range(rows):
+    column.append(grid[r][c])
+  grid_transposed.append(column)
+
+print(grid)
+"""
+[
+  [1, 4],
+  [2, 5],
+  [3, 6]
+]
+"""
+
+```
+
+Works well enough, of course assuming the grid can be transposed.
+
+With a list comprehension, it might lead to some head-scratching, but it is as follows:
+
+```py
+rows = len(grid)
+columns = len(grid[0])
+
+grid_transposed = [[grid[r][c] for r in range(rows)] for c in range(columns)]
+```
+
+### Grid/3
+
+Back to the grid, create the transposed grid using the rows and columns saved in the `__init__` method.
+
+```py
+def add_to_column(self, column, input):
+    grid_transposed = [[self.grid[r][c] for r in range(self.rows)] for c in range(self.columns)]
+```
+
+Identify the desired column:
+
+```py
+def add_to_column(self, column, input):
+    grid_transposed = [[self.grid[r][c] for r in range(self.rows)] for c in range(self.columns)]
+    grid_column = grid_transposed[column]
+```
+
+The index of the first empty space.
+
+```py
+def add_to_column(self, column, input):
+    grid_transposed = [[self.grid[r][c] for r in range(self.rows)] for c in range(self.columns)]
+    grid_column = grid_transposed[column]
+    index = grid_column.index(" ")
+```
+
+And modify the value in the original grid.
+
+```py
+def add_to_column(self, column, input):
+    grid_transposed = [[self.grid[r][c] for r in range(self.rows)] for c in range(self.columns)]
+    grid_column = grid_transposed[column]
+    index = grid_column.index(" ")
+    self.grid[index][column] = input
+```
+
+Almost there. The value is added, but not quite where we'd want it.
+
+```py
+columns = 5
+rows = 4
+grid = Grid(columns, rows)
+grid.add_to_column(3, "R")
+grid.add_to_column(3, "T")
+print(grid)
+
+"""
+|   |   |   | R |   |
+|   |   |   | T |   |
+|   |   |   |   |   |
+|   |   |   |   |   |
+ --- --- --- --- ---
+  0   1   2   3   4
+"""
+```
+
+### reversed
+
+The first, most obvious shortcoming is fixed by considering that the transposed grid reads top to bottom, and the goal is to add the items in reverse order.
+
+To fix this, reverse the column as it is retrieved.
+
+```py
+grid_column = list(reversed(grid_transposed[column]))
+```
+
+It seems necessary to use the `list` function as `reversed` returns a [reverse iterator](https://docs.python.org/3/library/functions.html#reversed).
+
+This leads to the correct index bottom to top, but it is then necessary to modify the value in the original grid starting from the end of the grid.
+
+```py
+self.grid[len(self.grid) - 1 - index][column] = input
+```
+
+Definitely not my first try, but it works.
+
+```py
+columns = 5
+rows = 4
+grid = Grid(columns, rows)
+grid.add_to_column(3, "R")
+grid.add_to_column(3, "T")
+print(grid)
+
+"""
+|   |   |   |   |   |
+|   |   |   |   |   |
+|   |   |   | T |   |
+|   |   |   | R |   |
+ --- --- --- --- ---
+  0   1   2   3   4
+"""
+```
+
+### try except
+
+The second issue is what happens when you add to a column that is already filled.
+
+```py
+columns = 5
+rows = 4
+grid = Grid(columns, rows)
+grid.add_to_column(3, "R")
+grid.add_to_column(3, "T")
+grid.add_to_column(3, "T")
+grid.add_to_column(3, "T")
+grid.add_to_column(3, "T")
+
+# ValueError: ' ' is not in list
+```
+
+A `try...except` block allows to handle this error more gracefully. The idea is to literally try something, in this instance finding the index of the empty space.
+
+```py
+try:
+  index = grid_column.index(" ")
+  self.grid[len(self.grid) - 1 - index][column] = input
+```
+
+In the `except` statement then the idea is to handle the specific error.
+
+```py
+except ValueError:
+            print("Column unavailable")
+```
+
+### Gameplay
+
+With the grid class "complete", the next step is creating the game, and allowing to fill the grid following user input. I put "complete" between quotes because I can think of at least another useful method in the class, to dictate whether four values match.
