@@ -448,9 +448,161 @@ In the `except` statement then the idea is to handle the specific error.
 
 ```py
 except ValueError:
-            print("Column unavailable")
+  print("Column unavailable")
 ```
 
 ### Gameplay
 
 With the grid class "complete", the next step is creating the game, and allowing to fill the grid following user input. I put "complete" between quotes because I can think of at least another useful method in the class, to dictate whether four values match.
+
+```py
+def matches_four(self):
+  return False
+```
+
+For starters, I created a utility function to display a message almost as a header.
+
+```py
+def highlight_message(message):
+    print()
+    print("*" * len(message))
+    print(message)
+    print("*" * len(message))
+    print()
+```
+
+For an arbitrary message:
+
+```py
+highlight_message("Connect Four")
+
+"""
+************
+Connect Four
+************
+"""
+```
+
+The game itself, it is set up in a function `run_game`, with the following sequence:
+
+- introduce the game
+
+- set up the grid and display the same
+
+  ```py
+  columns = 6
+      rows = 6
+      grid = Grid(columns, rows)
+
+      print(grid)
+      print()
+  ```
+
+- initialize a variable to keep track of the player
+
+  ```py
+  player = "R"
+  ```
+
+  I chose `R` and `T` arbitrarily.
+
+- set up a loop. Almost like a game loop, the idea is to ask for input until the game is complete.
+
+  ```py
+  while True:
+  ```
+
+### Game Loop
+
+In the game loop notify the current player and ask for which column to actually fill.
+
+```py
+print(f"Player: {player}")
+column = input("Select column: ")
+```
+
+I decided to add an arbitrary condition to exit the game, by entering the letter `q`, but let's focus on the input itself. The idea is to handle a few errors:
+
+- the input is not a number
+
+- the input doesn't describe a viable column. This either because out of range, or because the column is already filled
+
+The second error is a bit more challenging, so starting with the first.
+
+### try except else
+
+When you coerce a string into a number with the `int` function, you get an error if the input cannot be coerced.
+
+The [docs](https://docs.python.org/3/tutorial/errors.html) describe quite a bit about error handling, but here I use a try..except..else sequence.
+
+1. try something
+
+```py
+try:
+    c = int(column)
+```
+
+Handle the specific error
+
+```py
+except ValueError:
+  highlight_message("**Enter a number**")
+```
+
+Continue with the input integer.
+
+```py
+else:
+  # consider column
+```
+
+### try except else/2
+
+When selecting the column:
+
+```py
+grid_column = list(reversed(grid_transposed[column]))
+index = grid_column.index(" ")
+```
+
+There are two possible errors:
+
+1. `IndexError`. This is when the number exceeds the number of columns, and you try to access a column that does not exist
+
+1. `ValueError`. This is when a column is full, and `.index(" ")` doesn't find the value in the list.
+
+Both errors can be considered in a try, except, else block,
+
+```py
+try:
+    grid_column = list(reversed(grid_transposed[column]))
+    index = grid_column.index(" ")
+except (IndexError, ValueError):
+    # handle error
+else:
+    # handle success, add the input to the selected column
+    self.grid[len(self.grid) - 1 - index][column] = input
+```
+
+Since I plan to notify the player from the game loop, I decided to also return a boolean for each of the two routes. This allows to show a message right in the `run_game` function.
+
+- if `add_to_column` returns true, show the grid and update the player
+
+```py
+if grid.add_to_column(c, player):
+  print()
+  print(grid)
+  print()
+
+  if player == "R":
+      player = "T"
+  else:
+      player = "R"
+```
+
+If `False`, notify the player of the mishap/error.
+
+```py
+else:
+  highlight_message(f"**Column unavailable**")
+```
