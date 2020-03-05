@@ -606,3 +606,108 @@ If `False`, notify the player of the mishap/error.
 else:
   highlight_message(f"**Column unavailable**")
 ```
+
+### Victory
+
+Back to the `matches_four()` function, the idea is to check for a victory after the grid is updated and notified.
+
+```py
+if grid.add_to_column(c, player):
+  print()
+  print(grid)
+  print()
+
+  if grid.matches_four():
+    # handle victory
+    break
+```
+
+This allows to describe the winner by referencing the current player.
+
+```py
+if grid.matches_four():
+  highlight_message(f"Player {player} wins!")
+  break
+```
+
+To check for a victory, it is actually helpful to know the coordinates of the cell. To this end, instead of returning `True`, `.add_to_column` is updated to return a tuple describing the selected row and column.
+
+```py
+row = len(self.grid) - 1 - index
+# update grid
+self.grid[row][column] = input
+
+# return coordinates
+return (row, column)
+```
+
+With this information, it is necessary to check the row/column/diagonals including the cell.
+
+```py
+cell = grid.add_to_column(c, player)
+  if cell:
+    row, column = cell
+    if grid.matches_four(row, column):
+      # handle victory
+```
+
+In the body of the function we finally check for the matches. I fumbled a little with _how_ to do this, but eventually, I find a rather nifty approach using the `.index()` function.
+
+Here's the idea:
+
+- build a string for the current row, column, diagonals
+
+- find if the string contains four instances of the current player. `RRRR` or `TTTT`
+
+`.index()` actually prompts an error if there's no such value, so a `try` `except` `else` block is required.
+
+```py
+match = ''
+# build string
+
+try:
+    match.index(player * 4)
+except ValueError:
+    return False
+else:
+    return True
+```
+
+For the row, it is enough to consider a list from the grid and the given index.
+
+```py
+current_row = self.grid[row]
+for cell in current_row:
+    match += cell
+match += ' '
+```
+
+Notice I included an additional whitespace character, to avoid finding a match between the row and the column.
+
+For the column, instead of transposing the entire grid, I can build a list using a list comprehension, and the number of rows in the grid itself.
+
+```py
+current_column = [self.grid[index][column] for index in range(len(self.grid))]
+```
+
+It didn't come immediately, and it helped to build the list with a for loop first.
+
+```py
+current_column = []
+for index in range(len(self.grid)):
+  current_column.append(self.grid[index][column])
+```
+
+Either way, the values of the current column are added to the string exactly like with the current row.
+
+```py
+for cell in current_column:
+    match += cell
+match += ' '
+```
+
+The most challenging portion then, relates to adding the values for the diagonals.
+
+<!-- ### Wrap Up
+
+It works, but it is actually unnecessary to consider the entirety of the current row/column/diagonals. It'd be better to have a list spanning four values around the current cell instead, and I'll leave that improvement as a challenge for a future update. -->
