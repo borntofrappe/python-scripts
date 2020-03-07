@@ -33,52 +33,36 @@ class Grid:
         match = ''
 
         # row
-        current_row = self.grid[row]
-        for cell in current_row:
-            match += cell
-        match += ' '
-
-        # column (backwards, but not important)
-        current_column = [self.grid[index][column]
-                          for index in range(len(self.grid))]
-        for cell in current_column:
-            match += cell
-        match += ' '
+        c_min = max(0, column - 3)
+        c_max = min(self.columns, column + 3)
 
         # diagonals
-        # ....TODO
-        # southwest to northeast
-        x = column
-        y = self.rows - row - 1
+        north_east = ''
+        south_east = ''
+        counter = c_min - column
 
-        if x < y:
-            y -= x
-            x = 0
-        else:
-            x -= y
-            y = 0
-        while x < self.columns and y < self.rows:
-            match += self.grid[self.rows - y - 1][x]
-            x += 1
-            y += 1
+        for c in range(c_max - c_min):
+            match += self.grid[row][c + c_min]
 
+            # diagonals
+            if row - counter >= 0 and row - counter < self.rows:
+                north_east += self.grid[row - counter][c + c_min]
+            if row + counter >= 0 and row + counter < self.rows:
+                south_east += self.grid[row + counter][c + c_min]
+            counter += 1
+
+        # add the diagonals
+        match += ' '
+        match += north_east
+        match += ' '
+        match += south_east
         match += ' '
 
-        # northeast to southwest
-        x = column
-        y = self.rows - row - 1
-
-        if x < y:
-            x += y
-            y = 0
-        else:
-            y -= x
-            x = self.columns - 1
-        while x > 0 and y < self.rows:
-            match += self.grid[self.rows - y - 1][x]
-            x -= 1
-            y += 1
-
+        # column
+        r_min = max(0, row - 3)
+        r_max = min(self.rows, row + 3)
+        for r in range(r_max - r_min):
+            match += self.grid[r + r_min][column]
         match += ' '
 
         # try to find four of the same value in the made up string

@@ -708,6 +708,50 @@ match += ' '
 
 The most challenging portion then, relates to adding the values for the diagonals.
 
-<!-- ### Wrap Up
+### Victory/2
 
-It works, but it is actually unnecessary to consider the entirety of the current row/column/diagonals. It'd be better to have a list spanning four values around the current cell instead, and I'll leave that improvement as a challenge for a future update. -->
+I pick up this project a couple of days since the previous update, and I decided to rewrite the way I consider the rows and columns before considering the diagonals. It is inefficient to consider the entire row/the entire column. To tackle this issue, I use the `min` and `max` function to build a range of the appropriate values.
+
+For the rows, and considering that a match consists of `4` values, consider up to three columns before/after the current one.
+
+```py
+c_min = max(0, column - 3)
+c_max = min(self.columns, column + 3)
+for c in range(c_max - c_min):
+    match += self.grid[row][c + c_min]
+```
+
+Took me a while to grasp the logic, but divvying up the code with two additional variables helped.
+
+For the column, the logic is repeated considering up to three cells before and after the current row. This time, it is also unnecessary to consider that the grid is read top down, as we access the cells based on the given row.
+
+```py
+r_min = max(0, row - 3)
+r_max = min(self.rows, row + 3)
+for r in range(r_max - r_min):
+  match += self.grid[r + r_min][column]
+```
+
+I forgot to mention however, that after each addition to the `match` string, I still add an empty space to avoid finding a match between in between the row and column.
+
+```py
+match += ' '
+```
+
+Back to the diagonals, and the crux of this game, I actually found a solution in the for loop describing the row. I'll elaborate the idea, and try to come up with a better explanation in a future update.
+
+The idea is to consider the distance from the current cell, and add the value in the previous/following row on the basis of this very distance.
+
+In this made up example:
+
+```code
+x x c x x
+```
+
+When you consider the first column, you consider the cell in the row twice above and below the current one.
+
+```code
+-2 -1 0 1 2
+```
+
+It took me a while, but making sure that such a row is available, it is possible to consider both diagonals by adding or subtracting the distance to the current row.
