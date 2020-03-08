@@ -1,6 +1,6 @@
-# Connect Four
+# [Connect Four](https://repl.it/@borntofrappe/connect-four)
 
-A game in which you are tasked to link together shapes of the same color.
+> Match cells of the same color in the terminal console
 
 ## Links
 
@@ -8,13 +8,11 @@ A game in which you are tasked to link together shapes of the same color.
 
   Inspiring, but not driving the project. I plan to review the video _after_ I give the challenge its fair chance, and jot my notes on what I've learned from it.
 
-- [Repl](https://repl.it/@borntofrappe/connect-four) in which the game is played in the terminal. Run the program and then select the column in which to slot the shape.
+- [Repl](https://repl.it/@borntofrappe/connect-four) in which the game is played in the terminal. Run the program and then select the column by entering the matching number.
 
-<!-- - [Repl]() recreating the game with the pygame module -->
+## Getting Started
 
-## C4 - Terminal
-
-In its first version, the game displays a grid right in the terminal. The idea is to provide a grid with the following format:
+The idea is to provide a grid with the following format:
 
 ```code
 |   |   |   |   |   |
@@ -26,16 +24,20 @@ In its first version, the game displays a grid right in the terminal. The idea i
   0   1   2   3   4
 ```
 
-Past the grid, the player is tasked to select a column and add a shape of a particular color. `R` for red, `T` for tangerine.
+Past the grid, the player is asked to pick a column and add a letter. `R` for red, `T` for tangerine.
 
 ```code
 Player: R
 Select column: {{ask for input in the [0-4] range}}
 ```
 
-At each iteration you position a letter at the bottom of the grid.
+At each iteration, the letter is positioned at the bottom of the grid.
 
 ```code
+Player: R
+Select column: 3
+
+"""
 |   |   |   |   |   |
 |   |   |   |   |   |
 |   |   |   |   |   |
@@ -43,18 +45,28 @@ At each iteration you position a letter at the bottom of the grid.
 |   |   |   | R |   |
  --- --- --- --- ---
   0   1   2   3   4
+"""
 ```
 
-And toggle the player's choice.
+The player's choice is toggled to the other value and the process is repeated.
 
 ```code
 Player: T
-Select column: {{ask for input in the [0-4] range}}
+Select column: 3
+
+"""
+|   |   |   |   |   |
+|   |   |   |   |   |
+|   |   |   |   |   |
+|   |   |   | T |   |
+|   |   |   | R |   |
+ --- --- --- --- ---
+  0   1   2   3   4
 ```
 
-### Grid
+## Grid
 
-Starting with a class creating and displaying the grid. The idea is to have an object created as follows:
+I plan to recreate the grid with a class. The goal is to have an instance of the class as follows:
 
 ```py
 columns = 5
@@ -75,7 +87,7 @@ To create the grid, I would ordinarily use a for loop, but having learned about 
 
 ### List comprehension
 
-With a for loop, create a list as follows:
+With a for loop, you create a list as follows:
 
 ```py
 nums = []
@@ -92,7 +104,7 @@ nums = [i for i in range(5)]
 print(nums) # [0, 1, 2, 3, 4]
 ```
 
-The tricky bit is that the grid is better off described as a nested list.
+The tricky bit for the current game is that the grid is actually a nested list.
 
 With a for loop.
 
@@ -141,13 +153,15 @@ Might need some getting use to it. Consider it in increments.
 grid = [r for r in range(rows)]
 ```
 
-`r` is the value added to the list. In this instance, the integer in the `[0, rows]` range, but the idea is to include another list.
+`r` is the value added to the list. In this instance, the integer in the `[0, rows]` range.
+
+Instead of a single value `r` however, the idea is to include another list.
 
 ```py
 grid = [[] for r in range(rows)]
 ```
 
-Just not any other list however. A list describing the columns, which itself can be created with a list comprehension.
+Just not any other list though. A list describing the columns, which itself can be created with a list comprehension.
 
 ```py
 grid = [[c for c in range(columns)] for r in range(rows)]
@@ -157,7 +171,7 @@ Instead of adding just the column, finally, you include the tuple specifying the
 
 Long-winded, but hopefully clear enough.
 
-### Grid/2
+## Grid/2
 
 Back to the grid, instead of the coordinates, create a grid of empty items.
 
@@ -171,7 +185,7 @@ class Grid:
 
 `self.columns` and `self.rows` might be unnecessary, but I'll keep them for the time being.
 
-### **str**
+## **str**
 
 The `print` statement produces whatever is returned in the `__str__` method.
 
@@ -212,7 +226,7 @@ print(grid)
 """
 ```
 
-A bit of trial and effort was required.
+Fait to say that a bit of trial and effort was required.
 
 At the end of the grid, add a new line for the dashes describing the floor, and a new line for the indexes of the columns.
 
@@ -249,9 +263,9 @@ print(grid)
 """
 ```
 
-I would add a variable to describe the number of spaces between cells, instead of using hard-coded integers, overall I'm pretty satisfied with the end result.
+I added a variable to describe the number of spaces between cells, instead of using hard-coded integers, but this covers the grid's output.
 
-### Class methods
+## Class methods
 
 The idea is to use a method to add a letter at the bottom of the grid. I would also need a method to empty the grid, but that's easier to implement.
 
@@ -279,7 +293,7 @@ And have it fill the column with the specified input. Starting from the bottom, 
   0   1   2   3
 ```
 
-### List comprehension/2
+## List comprehension/2
 
 The documentation for [nested list comprehensions](https://docs.python.org/3/tutorial/datastructures.html?highlight=comprehension#nested-list-comprehensions) actually described something very helpful in this regard: how to _transpose_ a matrix. The idea is to describe a grid through its columns, so to have easier access to the cells in order.
 
@@ -288,14 +302,15 @@ Let me repeat the "for loop" first, "list comprehension" later approach, just to
 With a for loop:
 
 ```py
+# build grid
+rows = 2
+columns = 3
 grid = [
   [1, 2, 3],
   [4, 5, 6]
 ]
-grid_transposed = []
 
-rows = len(grid)
-columns = len(grid[0])
+grid_transposed = []
 
 for c in range(columns):
   column = []
@@ -311,23 +326,19 @@ print(grid)
   [3, 6]
 ]
 """
-
 ```
 
 Works well enough, of course assuming the grid can be transposed.
 
-With a list comprehension, it might lead to some head-scratching, but it is as follows:
+With a list comprehension, it might lead to some head-scratching, but it works as follows:
 
 ```py
-rows = len(grid)
-columns = len(grid[0])
-
 grid_transposed = [[grid[r][c] for r in range(rows)] for c in range(columns)]
 ```
 
-### Grid/3
+## Grid/3
 
-Back to the grid, create the transposed grid using the rows and columns saved in the `__init__` method.
+Back once more to the grid, create the transposed structure using the rows and columns saved in the `__init__` method.
 
 ```py
 def add_to_column(self, column, input):
@@ -381,7 +392,7 @@ print(grid)
 """
 ```
 
-### reversed
+## reversed
 
 The first, most obvious shortcoming is fixed by considering that the transposed grid reads top to bottom, and the goal is to add the items in reverse order.
 
@@ -393,7 +404,7 @@ grid_column = list(reversed(grid_transposed[column]))
 
 It seems necessary to use the `list` function as `reversed` returns a [reverse iterator](https://docs.python.org/3/library/functions.html#reversed).
 
-This leads to the correct index bottom to top, but it is then necessary to modify the value in the original grid starting from the end of the grid.
+This leads to the correct index bottom to top, but it is then necessary to modify the value in the original grid, starting from the end of the grid.
 
 ```py
 self.grid[len(self.grid) - 1 - index][column] = input
@@ -419,9 +430,9 @@ print(grid)
 """
 ```
 
-### try except
+## try except
 
-The second issue is what happens when you add to a column that is already filled.
+The second issue relates to what happens when you add to a column that is already filled.
 
 ```py
 columns = 5
@@ -436,7 +447,9 @@ grid.add_to_column(3, "T")
 # ValueError: ' ' is not in list
 ```
 
-A `try...except` block allows to handle this error more gracefully. The idea is to literally try something, in this instance finding the index of the empty space.
+There are no longer empty spaces, and the `index` function returns a `ValueError`.
+
+A `try...except` block allows to handle this error quite gracefully. The idea is to literally try something, in this instance finding the index of the empty space.
 
 ```py
 try:
@@ -451,14 +464,37 @@ except ValueError:
   print("Column unavailable")
 ```
 
-### Gameplay
+### Update
 
-With the grid class "complete", the next step is creating the game, and allowing to fill the grid following user input. I put "complete" between quotes because I can think of at least another useful method in the class, to dictate whether four values match.
+While the code works, it might be easier to read using `try`, `except` _and_ `else` block. Following the `else` statement, include the code which runs after the code that has been tried:
+
+- `try` something
+
+- if there is an error, cover it in the `except` block
+
+- if no error is found, continue in the `else` block
+
+```py
+try:
+  index = grid_column.index(" ")
+except ValueError:
+  print("Column unavailable")
+else:
+  self.grid[len(self.grid) - 1 - index][column] = input
+```
+
+Refer to the [docs for error handling](https://docs.python.org/3/tutorial/errors.html) for more information,
+
+## Gameplay
+
+With the grid class "complete", the next step is creating the game, and allowing to fill the grid following user input. I can think of at least another useful method in the class, to dictate whether four values match.
 
 ```py
 def matches_four(self):
   return False
 ```
+
+But I'd rather cover the interactions set up when the program is run,
 
 For starters, I created a utility function to display a message almost as a header.
 
@@ -471,7 +507,7 @@ def highlight_message(message):
     print()
 ```
 
-For an arbitrary message:
+Surrounded by two lines filled with asterisks. For an arbitrary message:
 
 ```py
 highlight_message("Connect Four")
@@ -483,11 +519,11 @@ Connect Four
 """
 ```
 
-The game itself, it is set up in a function `run_game`, with the following sequence:
+The game is set up in a function `run_game`, and with the following sequence:
 
 - introduce the game
 
-- set up the grid and display the same
+- set up the grid and display its structure
 
   ```py
   columns = 6
@@ -512,7 +548,7 @@ The game itself, it is set up in a function `run_game`, with the following seque
   while True:
   ```
 
-### Game Loop
+## Game Loop
 
 In the game loop notify the current player and ask for which column to actually fill.
 
@@ -529,62 +565,43 @@ I decided to add an arbitrary condition to exit the game, by entering the letter
 
 The second error is a bit more challenging, so starting with the first.
 
-### try except else
+## try except else
 
 When you coerce a string into a number with the `int` function, you get an error if the input cannot be coerced.
 
-The [docs](https://docs.python.org/3/tutorial/errors.html) describe quite a bit about error handling, but here I use a try..except..else sequence.
+- try
 
-1. try something
+  ```py
+  try:
+      c = int(column)
+  ```
 
-```py
-try:
-    c = int(column)
-```
+- relate the specific error with the `highlight_message` function
 
-Handle the specific error
+  ```py
+  except ValueError:
+    highlight_message("**Enter a number**")
+  ```
 
-```py
-except ValueError:
-  highlight_message("**Enter a number**")
-```
+- continue with the input integer.
 
-Continue with the input integer.
-
-```py
-else:
-  # consider column
-```
+  ```py
+  else:
+    # consider column
+  ```
 
 ### try except else/2
 
-When selecting the column:
+When selecting the column, I already covered a `ValueError`, when the column was already filled and the `.index(" ")` couldn't find the value in the list.
+
+There might be an additional error however, when the selected column is not available at all. Outside of the grid's scope. This error materializes itself with a `IndexError`, and it can be covered in the `except` block by specifying both errors in between parenthesis.
 
 ```py
-grid_column = list(reversed(grid_transposed[column]))
-index = grid_column.index(" ")
-```
-
-There are two possible errors:
-
-1. `IndexError`. This is when the number exceeds the number of columns, and you try to access a column that does not exist
-
-1. `ValueError`. This is when a column is full, and `.index(" ")` doesn't find the value in the list.
-
-Both errors can be considered in a try, except, else block,
-
-```py
-try:
-    grid_column = list(reversed(grid_transposed[column]))
-    index = grid_column.index(" ")
 except (IndexError, ValueError):
-    # handle error
-else:
-    # handle success, add the input to the selected column
-    self.grid[len(self.grid) - 1 - index][column] = input
+    # handle errors
 ```
 
-Since I plan to notify the player from the game loop, I decided to also return a boolean for each of the two routes. This allows to show a message right in the `run_game` function.
+This error is handled in the `add_to_column` function, but since I plan to notify the user from the game loop, I decided not to include `print` statements in the grid class. Instead, the function is made to return `True` or `False` from the `try`, `except`, `else` block, and an `if` statement in the game loop handles the rest.
 
 - if `add_to_column` returns true, show the grid and update the player
 
@@ -600,16 +617,16 @@ if grid.add_to_column(c, player):
       player = "R"
 ```
 
-If `False`, notify the player of the mishap/error.
+If `False`, notify the player of the error.
 
 ```py
 else:
   highlight_message(f"**Column unavailable**")
 ```
 
-### Victory
+## Victory
 
-Back to the `matches_four()` function, the idea is to check for a victory after the grid is updated and notified.
+In the `matches_four()` function, the idea is to check for a victory after the grid is updated, but before the player is toggled.
 
 ```py
 if grid.add_to_column(c, player):
@@ -651,7 +668,7 @@ cell = grid.add_to_column(c, player)
       # handle victory
 ```
 
-In the body of the function we finally check for the matches. I fumbled a little with _how_ to do this, but eventually, I find a rather nifty approach using the `.index()` function.
+In the body of the function we check for the matches. I fumbled a little with _how_ to do this, but eventually, I found a rather nifty approach using the `.index()` function.
 
 Here's the idea:
 
@@ -659,7 +676,7 @@ Here's the idea:
 
 - find if the string contains four instances of the current player. `RRRR` or `TTTT`
 
-`.index()` actually prompts an error if there's no such value, so a `try` `except` `else` block is required.
+As seen earlier, `.index()` prompts an error if there's no such value, so a `try` `except` `else` block will be enough to cover the rest.
 
 ```py
 match = ''
@@ -682,7 +699,7 @@ for cell in current_row:
 match += ' '
 ```
 
-Notice I included an additional whitespace character, to avoid finding a match between the row and the column.
+Notice I included an additional whitespace character, to avoid finding a match between the row and the column which follows.
 
 For the column, instead of transposing the entire grid, I can build a list using a list comprehension, and the number of rows in the grid itself.
 
@@ -694,7 +711,8 @@ It didn't come immediately, and it helped to build the list with a for loop firs
 
 ```py
 current_column = []
-for index in range(len(self.grid)):
+rows = len(self.grid)
+for index in range(rows):
   current_column.append(self.grid[index][column])
 ```
 
@@ -708,9 +726,11 @@ match += ' '
 
 The most challenging portion then, relates to adding the values for the diagonals.
 
-### Victory/2
+## Victory/2
 
-I pick up this project a couple of days since the previous update, and I decided to rewrite the way I consider the rows and columns before considering the diagonals. It is inefficient to consider the entire row/the entire column. To tackle this issue, I use the `min` and `max` function to build a range of the appropriate values.
+I picked up this project a couple of days from the previous update, and I decided to rewrite the way I consider the rows and columns before tackling the diagonals.
+
+It is inefficient to consider the entire row/the entire column. To fix this issue, I use the `min` and `max` function to build a range of the appropriate values.
 
 For the rows, and considering that a match consists of `4` values, consider up to three columns before/after the current one.
 
@@ -723,7 +743,7 @@ for c in range(c_max - c_min):
 
 Took me a while to grasp the logic, but divvying up the code with two additional variables helped.
 
-For the column, the logic is repeated considering up to three cells before and after the current row. This time, it is also unnecessary to consider that the grid is read top down, as we access the cells based on the given row.
+For the column, the logic is repeated considering up to three cells before and after the current row.
 
 ```py
 r_min = max(0, row - 3)
@@ -732,13 +752,9 @@ for r in range(r_max - r_min):
   match += self.grid[r + r_min][column]
 ```
 
-I forgot to mention however, that after each addition to the `match` string, I still add an empty space to avoid finding a match between in between the row and column.
+The grid is read top to bottom, but since we use a range, it is unnecessary to flip the dimensions.
 
-```py
-match += ' '
-```
-
-Back to the diagonals, and the crux of this game, I actually found a solution in the for loop describing the row. I'll elaborate the idea, and try to come up with a better explanation in a future update.
+Back to the diagonals, and the crux of this project, I actually found a solution in the for loop describing the row. I'll elaborate the idea, and try to describe the approach as clearly as possible.
 
 The idea is to consider the distance from the current cell, and add the value in the previous/following row on the basis of this very distance.
 
@@ -755,3 +771,25 @@ When you consider the first column, you consider the cell in the row twice above
 ```
 
 It took me a while, but making sure that such a row is available, it is possible to consider both diagonals by adding or subtracting the distance to the current row.
+
+For the approach: initialize three variables:
+
+- `c_gap` to describe the distance from the current column
+
+- `north_east` and `south_east` to store the values in the diagonals. Since the values are considered in the for loop for the row, its characters are included only after the for loop has considered its columns
+
+In the for loop, I'll elaborate for one diagonal, but the logic is eerily similar for the other segment.
+
+Consider if the row `c_gap` away is available. In other words, in the `0`, `self.rows` range.
+
+```py
+if row - c_gap >= 0 and row - c_gap < self.rows:
+```
+
+Add the value in said row, and in the column already described in the for loop.
+
+```py
+north_east += self.grid[row - c_gap][c + c_min]
+```
+
+For the other column, instead of subtracting `c_gap`, add the value. I might have flipped `south_east` with `north_east`, but it should make sense considering, one last time, that the grid reads top to bottom, and higher indexes relate to rows lower in the structure.

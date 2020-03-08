@@ -37,21 +37,21 @@ class Grid:
         c_max = min(self.columns, column + 3)
 
         # diagonals
+        c_gap = c_min - column
         north_east = ''
         south_east = ''
-        counter = c_min - column
 
         for c in range(c_max - c_min):
             match += self.grid[row][c + c_min]
 
             # diagonals
-            if row - counter >= 0 and row - counter < self.rows:
-                north_east += self.grid[row - counter][c + c_min]
-            if row + counter >= 0 and row + counter < self.rows:
-                south_east += self.grid[row + counter][c + c_min]
-            counter += 1
+            if row - c_gap >= 0 and row - c_gap < self.rows:
+                north_east += self.grid[row - c_gap][c + c_min]
+            if row + c_gap >= 0 and row + c_gap < self.rows:
+                south_east += self.grid[row + c_gap][c + c_min]
+            c_gap += 1
 
-        # add the diagonals
+        # diagonals/2
         match += ' '
         match += north_east
         match += ' '
@@ -97,6 +97,7 @@ def highlight_message(message):
 
 
 def run_game():
+    # setup
     highlight_message("*** Connect Four ***")
 
     columns = 6
@@ -107,6 +108,8 @@ def run_game():
     print()
 
     player = "R"
+
+    # game loop
     while True:
         print(f"Player: {player}")
         column = input("Select column: ")
