@@ -1,3 +1,5 @@
+**Notice**: I'm still working on the script, not to mention its accompanying explanation
+
 # Connect Four Visuals
 
 > Match shapes of the same color
@@ -19,7 +21,7 @@ game = {
     "caption": "Connect Four",
     "width": 500,
     "height": 400,
-    "fill": (20, 20, 20),
+    "fill": (10, 10, 10),
 }
 ```
 
@@ -296,3 +298,76 @@ def get_colors(self):
 ```
 
 I say superfluous since the list of tuples is set up earlier in the function.
+
+## Grid
+
+Picking up from [the previous script](), the idea is to set up a grid.
+
+```py
+grid = Grid(columns, rows)
+```
+
+I actually thought it'd be necessary to modify the `Grid` class, as to contain instances of the `Circle` class, but it is actually possible to use the logic as-is. The idea is to add characters to the grid, say `R` and `Y` for red and yellow, and then draw circles with varying colors.
+
+This also means the `circles` list is no longer needed. Let me try and elaborate.
+
+- in the `run_game` function create an instance of the grid class
+
+  ```py
+  grid = Grid(columns, rows)
+  ```
+
+  Initialize also a variable to keep track of the player
+
+  ```py
+  grid = Grid(columns, rows)
+  player = "R"
+  ```
+
+- when drawing the game assets, loop through the grid to draw one circle for each cell
+
+To this end, I decided to create a `get_grid()` method for this precise purpose. Instead of returning the nested list however, I though of returning a flat version of the data structure. This to ultimately have access to individual cells which describe not only the value, but also the coordinates in the grid.
+
+```py
+cell = {
+  "value": "R",
+  "column": 0,
+  "row": 1
+}
+```
+
+In the grid class:
+
+```py
+def get_grid(self):
+  grid = []
+  for row in range(self.rows):
+    for column in range(self.columns):
+      cell = {
+          "value": self.grid[row][column],
+          "column": column,
+          "row": row
+      }
+      grid.append(cell)
+  return grid
+```
+
+In the game loop then, loop through the value returned by the method, changing a default color if the individual cell contains a matching value.
+
+```py
+for cell in grid.get_grid():
+  color = (40, 40, 40)
+  if cell["value"] == "R":
+    color = colors[0]
+  elif cell["value"] == "Y":
+    color = colors[1]
+```
+
+For the coordinates of the shape, the reasoning is a tad more complex. It is not enough to use the column and row, multiplied by the radius.
+
+```py
+cx = (cell["column"] + 1) * r
+cy = (cell["row"] + 2) * r
+```
+
+...

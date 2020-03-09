@@ -5,8 +5,8 @@ import sys
 game = {
     "caption": "Connect Four",
     "width": 500,
-    "height": 400,
-    "fill": (20, 20, 20)
+    "height": 500,
+    "fill": (10, 10, 10)
 }
 
 """
@@ -45,19 +45,129 @@ class Circle:
             self.color = self.colors[0]
 
 
+"""
+Grid class
+developed for playing connect four in the terminal
+the logic to show the grid with ASCII characters is preserved for debugging
+"""
+
+
+class Grid:
+    def __str__(self):
+        # ! prefer an odd number
+        spaces = 3
+        grid = ""
+        # pipes
+        for row in self.grid:
+            grid += "|"
+            for cell in row:
+                grid += cell.center(spaces, " ") + "|"
+            grid += "\n"
+
+        # dashes
+        grid += " " + ("-" * spaces + " ") * self.columns
+
+        # nums
+        grid += "\n "
+        for c in range(self.columns):
+            grid += str(c).center(spaces + 1, " ")
+        return grid
+
+    def __init__(self, columns, rows):
+        self.columns = columns
+        self.rows = rows
+        self.grid = [[" " for c in range(columns)] for r in range(rows)]
+
+    def get_grid(self):
+        grid = []
+        for row in range(self.rows):
+            for column in range(self.columns):
+                cell = {
+                    "value": self.grid[row][column],
+                    "column": column,
+                    "row": row
+                }
+                grid.append(cell)
+        return grid
+
+    def clear(self):
+        self.grid = [[" " for c in range(self.columns)]
+                     for r in range(self.rows)]
+
+    def matches_four(self, column, row, player):
+        # build a string describing the current row + current column + diagonals
+        match = ''
+
+        # row
+        c_min = max(0, column - 4)
+        c_max = min(self.columns, column + 4)
+
+        # diagonals
+        c_gap = c_min - column
+        north_east = ''
+        south_east = ''
+
+        for c in range(c_max - c_min):
+            match += self.grid[row][c + c_min]
+
+            # diagonals
+            if row - c_gap >= 0 and row - c_gap < self.rows:
+                north_east += self.grid[row - c_gap][c + c_min]
+            if row + c_gap >= 0 and row + c_gap < self.rows:
+                south_east += self.grid[row + c_gap][c + c_min]
+            c_gap += 1
+
+        # diagonals/2
+        match += ' '
+        match += north_east
+        match += ' '
+        match += south_east
+        match += ' '
+
+        # column
+        r_min = max(0, row - 4)
+        r_max = min(self.rows, row + 4)
+        for r in range(r_max - r_min):
+            match += self.grid[r + r_min][column]
+        match += ' '
+
+        # try to find four of the same value in the made up string
+        try:
+            match.index(player * 4)
+        except ValueError:
+            return False
+        else:
+            return True
+
+    def add_to_column(self, column, input):
+        grid_transposed = [[self.grid[r][c]
+                            for r in range(self.rows)] for c in range(self.columns)]
+
+        try:
+            grid_column = list(reversed(grid_transposed[column]))
+            index = grid_column.index(" ")
+        except (IndexError, ValueError):
+            return False
+        else:
+            row = len(self.grid) - 1 - index
+            self.grid[row][column] = input
+            return (column, row)
+
+
 def run_game():
     pygame.init()
     pygame.display.set_caption(game["caption"])
     screen = pygame.display.set_mode((game["width"], game["height"]))
 
     # grid setup
-    rows = 6
     columns = 6
+    rows = 6
 
     # r to fit the desired number of rows and columns
-    size = min(game["width"], game["height"])
-    r = min(int(game["width"] / (columns * 2)),
-            int(game["height"] / ((rows + 1) * 2)))
+    rx = int(game["width"] / (columns * 2))
+    ry = int(game["height"] / ((rows + 1) * 2))
+
+    r = min(rx, ry)
 
     # colors
     colors = [(180, 30, 30), (180, 180, 30)]
@@ -65,8 +175,9 @@ def run_game():
     # circle hovering on the grid
     circle_input = Circle(r, r, r, colors[0], colors)
 
-    # list of circles
-    circles = []
+    grid = Grid(columns, rows)
+    player = "R"
+    game_over = False
 
     while True:
         # key binding
@@ -82,19 +193,40 @@ def run_game():
                     circle_input.set_cx(cx)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                cx = circle_input.get_cx()
-                cy = game["height"] - r
-                color = circle_input.get_color()
-                circle = Circle(cx, cy, r, color, colors)
-                circles.append(circle)
+                if game_over:
+                    grid.clear()
+                    game_over = False
+                else:
+                    cx = pygame.mouse.get_pos()[0]
+                    column = cx // (rx * 2)
+                    cell = grid.add_to_column(column, player)
+                    if cell:
+                        column, row = cell
+                        if grid.matches_four(column, row, player):
+                            print(grid)
+                            game_over = True
+                        if player == "R":
+                            player = "Y"
+                        else:
+                            player = "R"
 
-                circle_input.toggle_color()
+                        circle_input.toggle_color()
 
         # draw
         screen.fill(game["fill"])
         circle_input.draw(screen)
-        for circle in circles:
-            circle.draw(screen)
+
+        for cell in grid.get_grid():
+            color = (40, 40, 40)
+            if cell["value"] == "R":
+                color = colors[0]
+            elif cell["value"] == "Y":
+                color = colors[1]
+
+            cx = (cell["column"]) * rx * 2 + rx
+            cy = (cell["row"] + 1) * ry * 2 + ry + 1
+
+            pygame.draw.circle(screen, color, (cx, cy), r)
 
         # update
         pygame.display.update()
