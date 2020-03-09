@@ -12,27 +12,33 @@
 
 ## Setup
 
-First, set up the game loop to show a window with a solid background and a hard-coded title.
+Starting with a bit of setup, create a dictionary to describe the main variables of the window.
 
 ```py
-import pygame
-import sys
-
 game = {
     "caption": "Connect Four",
     "width": 500,
     "height": 400,
-    "fill": (25, 20, 22),
+    "fill": (20, 20, 20),
 }
 ```
 
-I'm a bit rusty with pygame, so I'll take it one step at a time. In a function eventually describing the game loop.
+In terms of modules, the script uses `pygame`, and also the `sys`, to quit the program following a selection of events.
+
+```py
+import pygame
+import sys
+```
+
+In terms of logic, it is scoped to a dedicated function.
 
 ```py
 def run_game():
 ```
 
-Set up the pygame screen
+Which sets up the window and then a loop for the game loop.
+
+For the window, a few pygame specific methods create a screen with the hard-coded values.
 
 ```py
 pygame.init()
@@ -40,7 +46,7 @@ pygame.display.set_caption(game["caption"])
 screen = pygame.display.set_mode((game["width"], game["height"]))
 ```
 
-In the game loop then, update the display and fill the screen with the hard-coded tuple.
+In a game loop, the screen is updated with the matching method.
 
 ```py
 def run_game():
@@ -53,7 +59,7 @@ def run_game():
       pygame.display.update()
 ```
 
-Before moving on to drawing the grid and game assets, bind a couple of events to quit the game.
+Before moving on to drawing circles, I choose to bind a couple of events to quit the game.
 
 ```py
 while True:
@@ -67,124 +73,105 @@ while True:
   # draw and update
 ```
 
-## Draw
+## Circle
 
-Split the window in two rows:
+In terms of visual, the game relies heavily on circles:
 
-- input row, displaying a circle which can be moved left and right with the mouse event (and possibly in a future update with the arrow keys as well)
+- a circle to represent the player selection
 
-- output row, displaying the grid of circles in which, eventually, the input is supposed to be slotted
+- a grid of circles to describe the grid of the connect four game
 
-This means that, given a grid of `n` rows, the radius of the circle is capped at `height / (n + 1)`.
-
-There might be a better way to add padding, but I'll also add a hard-coded measure to give some space across the height.
-
-A similar reasoning applies to the width, but since the height is smaller in value, it relates more to the position of the circles than their size. Just to be safe however, consider the minimum between the two.
-
-```py
-size = min(game["width"], game["height"])
-rows = 6
-columns = 6
-padding = 20
-
-r = (size - padding) // (rows * 2 + 1)
-```
-
-I use hard-coded values to just draw the circles, but it might be better to create a class describing the input. As a proof of concept however, I'm only interested in drawing a circle in the top left corner.
-
-```py
-cx = r
-cy = r
-
-while True:
-  # event bindings
-
-  # draw
-  screen.fill(game["fill"])
-  pygame.draw.circle(screen, (0, 0, 0), (cx + padding // 2, cy + padding // 2), r)
-
-  # update
-```
-
-## Circle && Input
-
-Before moving on to draw the grid, I'll start by refactoring the input in a class. This to also incorporate the mouse event to reposition the circle at the top of the window.
+The first one is supposed to move horizontally, and above the latter structure. The circles of this last structure however, are not meant to move. As always, however, one step at a time.
 
 ```py
 class Circle:
-  def __init__(self, cx, cy, r):
-    self.cx = cx
-    self.cy = cy
-    self.r = r
-
-  def draw(self, screen, padding):
-        pygame.draw.circle(screen, (180, 180, 180), (self.cx + padding // 2, self.cy + padding // 2), self.r)
+    def __init__(self, cx, cy, r):
+        self.cx = cx
+        self.cy = cy
+        self.r = r
 ```
 
-In the `run_game()` function than simply initialize a circle
+Set up with three values describing the position and size of the shape, the class draws a circle with the `pygame.draw.circle` function.
 
 ```py
-def run_game():
-  circle_input = Circle(r, r, r)
+def draw(self, screen):
+  pygame.draw.circle(screen, (180, 180, 180), (self.cx, self.cy), self.r)
 ```
 
-And draw the shape using the matching function.
+Just remember to:
+
+1. initialize the circle in the `run_game` function
+
+   ```py
+   def run_game():
+     circle = Circle(100, 100, 20)
+   ```
+
+1. draw the shape _after_ the fill of the window.
+
+   ```py
+   while True:
+     circle.draw(screen)
+
+   ```
+
+The coordinates is a topic of future sections, but first, a word on the radius: to avoid any cropping, consider the space that would be occupied by the grid of circles. With given columns and rows + 1. This to account for the extra row.
 
 ```py
-while True:
-  circle_input.draw(screen, padding)
+rows = 5
+columns = 5
+
+r = min(int(game["width"] / (columns * 2)), min(int(game["height"] / ((rows + 1) * 2))))
 ```
 
-To reposition the circle, first create a function to set `cx`. This since the input is supposed to move only horizontally.
+## Circles
+
+The movable circle is position at the top of the screen, repeating the radius for all three values.
+
+```py
+circle_input = Circle(r, r, r)
+```
+
+This ensures the shape is positioned in the top left corner.
+
+Since the shape is supposed to move following the cursor, the class is expanded with a setter function.
 
 ```py
 def set_cx(self, cx):
   self.cx = cx
 ```
 
-In the game loop then, listen to the `MOUSEMOTION` event
+Setter function which is then invoked in the game loop, and following the `MOUSEMOTION` event.
 
 ```py
 if event.type == pygame.MOUSEMOTION:
 ```
 
-Retrieve the mouse coordinates with the `get_pos` function. It returns a tuple of integers, but I'm only interested in the horizontal dimension.
+pygame gives the coordinate of the cursor through the `get_pos` function. It returns a tuple of integers, but I'm only interested in the horizontal dimension.
 
 ```py
-cx = pygame.mouse.get_pos()[0]
-```
-
-Finally, update the position of the input.
-
-```py
-circle_input.set_cx(cx)
-```
-
-As a small refinement, the position of the input is can updated in the `[padding // 2 + radius, width - padding // 2 - radius]` range, to avoid cropping the shape.
-
-```py
-if cx > padding // 2 + r and cx < game["width"] - padding // 2 - r:
+if event.type == pygame.MOUSEMOTION:
+  cx = pygame.mouse.get_pos()[0]
   circle_input.set_cx(cx)
 ```
 
-It works, but not as intended. This is because the padding is incorporated in the `draw` function, so the horizontal coordinate should keep track of that measure. I mentioned a dislike toward the way I include whitespace, so I'll remove the `padding` variable for the time being.
+To avoid cropping, you can also update the coordinate in a safe range. Say `[r, width - r]`.
 
 ```py
-if cx > r and cx < game["width"] - r:
-  circle_input.set_cx(cx)
-
+if event.type == pygame.MOUSEMOTION:
+  cx = pygame.mouse.get_pos()[0]
+  if cx > r and cx < game["width"] - r:
+    circle_input.set_cx(cx)
 ```
 
-To be honest, it might actually be unnecessary to specify whitespace for the input circle, so this doesn't feel like a downgrade too much.
-
-Back to the logic of the game, the class benefits from a `set_cy` function as well, to position the circle in the grid below.
+While the circle moves horizontally, it is also necessary to change its vertical coordinate.
 
 ```py
 def set_cy(self, cy):
   self.cy = cy
 ```
 
-Since I haven't worked with the mouse object before, I'll start with a hard-coded measure to have the circle positioned at the bottom of the screen when the mouse is clicked.
+I haven't worked with the mouse object before, so I'll start with a hard-coded measure to have the circle positioned at the bottom of the screen.
 
 ```py
 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -216,11 +203,96 @@ for circle in circles:
   circle.draw(screen)
 ```
 
-It works, but in the spirit of having a setter function, it might actually be better to have a dedicated method returning the `cx` coordinate of the circle.
+It works, but following the example of a setter function, it might actually be better to have a dedicated method returning the `cx` coordinate of the circle.
 
 ```py
 def get_cx(self):
   return self.cx
 ```
 
-Up Next: building the eventual grid of inevitable circles
+Before moving on to the grid of circles, in which these shapes are then supposed to be slotted, a word on the color. It didn't occur to me until now, but the `Circle` class should also have a fourth variable describing the color. In the game function then, this color should be flipped for each new click event.
+
+I considered a couple of solutions, for instance describing the colors in the `game` dictionary, but decided instead to add the color and possible colors in the `Circle` class itself.
+
+```py
+class Circle:
+    def __init__(self, cx, cy, r, color, colors=[(180, 30, 30), (180, 180, 30)]):
+        self.cx = cx
+        self.cy = cy
+        self.r = r
+        self.color = color
+        self.colors = colors
+```
+
+The idea is to provide `colors` as a list of two tuples, with two color combinations (see default value). Then and with a toggle function, the value is updated picking between the alternative hue.
+
+```py
+def toggle_color(self):
+  if self.color == self.colors[0]:
+    self.color = self.colors[1]
+  else:
+    self.color = self.colors[0]
+```
+
+It is actually elegant how these values and functions are used in the `run_game` function.
+
+Set up the desired values (the default was included mostly to illustrate the point of the class).
+
+```py
+def run_game():
+  # previous code
+
+  colors = [(180, 30, 30), (180, 180, 30)]
+
+```
+
+Initialize the input circle with one of the two.
+
+```py
+def run_game():
+  # previous code
+  colors = [(180, 30, 30), (180, 180, 30)]
+
+  circle_input = Circle(r, r, r, colors[0], colors)
+```
+
+When the mouse is pressed, retrieve the color of the input circle, and use it for the new shape in the `circles` list.
+
+This means the class should also have a `get_color` method, returning the matching value.
+
+```py
+def get_color(self):
+  return self.color
+```
+
+Back in the function, and following the `MOUSEBUTTONDOWN` event, include the additional arguments.
+
+```py
+if event.type == pygame.MOUSEBUTTONDOWN:
+  cx = circle_input.get_cx()
+  color = circle_input.get_color()
+  cy = game["height"] - r
+
+  circle = Circle(cx, cy, r, color, colors)
+```
+
+And toggle the color of the movable shape.
+
+```py
+if event.type == pygame.MOUSEBUTTONDOWN:
+  cx = circle_input.get_cx()
+  color = circle_input.get_color()
+  cy = game["height"] - r
+
+  circle = Circle(cx, cy, r, color, colors)
+  circle_input.toggle_color()
+```
+
+It is perhaps superfluous, but the colors can also be retrieved setting up an additional method.
+
+```py
+def get_colors(self):
+  return self.colors
+```
+
+I say superfluous since the list of tuples is set up earlier in the function.
