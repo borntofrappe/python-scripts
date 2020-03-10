@@ -1,12 +1,10 @@
-**Notice**: I'm still working on the script, not to mention its accompanying explanation
-
 # Connect Four Visuals
 
 > Match shapes of the same color
 
 ## Links
 
-- [python script](https://github.com/borntofrappe/python-scripts/tree/master/connect-four) creating the connect-four game in the terminal console. See [the matching REPL](https://repl.it/@borntofrappe/connect-four) for a live demo.
+- [python script](https://github.com/borntofrappe/python-scripts/tree/master/connect-four) creating the connect-four game in the terminal. See [the matching REPL](https://repl.it/@borntofrappe/connect-four) for a live demo.
 
 - [Tutorial](https://youtu.be/XGf2GcyHPhc?t=5705) on the [freecodecamp YouTube channel](https://www.youtube.com/channel/UC8butISFwT-Wl7EV0hUK0BQ) inspiring the project.
 
@@ -680,12 +678,41 @@ As mentioned at the beginning of the section, it takes a few adjustments to reac
 
 A minor tweak to the syntax: since there is just one instance of the `Circle` class, I decided to rename `circle_input` as simply `circle`.
 
-<!-- TODO EXPLAIN REWRITE -->
+## Game over/2
 
-<!-- ## Game over/2
+To highlight that one of the two colors reached a match, I finally decided to update the `clear` method with an optional argument.
 
-Clear everything, but keep the color of the winning player. -->
-
+```py
+if grid.matches_four(column, row, color):
+  grid.clear(keep=color)
 ```
 
+The idea is to clear the grid of any color, except the one specified in the function call. This means that, when a game over is detected, the grid can be cleared of the losing hue, highlighting the winning set.
+
+```py
+def clear(self, keep=""):
+  for row in range(self.rows):
+    for column in range(self.columns):
+      if self.grid[row][column] != keep:
+        self.grid[row][column] = self.color_default
 ```
+
+I decided to use a [keyword argument](https://docs.python.org/3/glossary.html#term-parameter) more out of novelty than practical considerations. It does explain the purpose of the additional value with more clarity though.
+
+## Bug Report
+
+Testing the project with different values for the rows and columns, more specifically when there were more rows than columns, I found a bug in the `if` statement checking the horizontal coordinate of the input circle.
+
+```py
+if cx > offset_x // 2 and cx < game["width"] - offset_x // 2:
+  # add to column
+```
+
+Here I check if the coordinate falls in the grid, but I failed to account that `offset_x` already considers half of the space around the grid.
+
+```diff
+-  if cx > offset_x // 2 and cx < game["width"] - offset_x // 2:
++ if cx > offset_x + r and cx < game["width"] - offset_x:
+```
+
+Halving the measure again would result in a quirky bug, whereby clicking the cursor just before the grid would highlight column `-1`, and pick the last column of the grid. Clicking just after the column would highlight column `columns + 1` and do nothing instead (see the `try` block in the `add_to_column` function).

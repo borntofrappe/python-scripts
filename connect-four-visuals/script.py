@@ -101,9 +101,11 @@ class Grid:
                 grid.append(cell)
         return grid
 
-    def clear(self):
-        self.grid = [[self.color_default for c in range(self.columns)]
-                     for r in range(self.rows)]
+    def clear(self, keep=""):
+        for row in range(self.rows):
+            for column in range(self.columns):
+                if self.grid[row][column] != keep:
+                    self.grid[row][column] = self.color_default
 
     def matches_four(self, column, row, color):
         # build a string describing the current row + current column + diagonals
@@ -212,10 +214,11 @@ def run_game():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if game_over:
                     grid.clear()
+                    circle.toggle_color()
                     game_over = False
                 else:
                     cx = circle.get_cx()
-                    if cx > offset_x // 2 and cx < game["width"] - offset_x // 2:
+                    if cx > offset_x and cx < game["width"] - offset_x:
                         column = (cx - offset_x) // (r * 2)
                         color = circle.get_color()
                         cell = grid.add_to_column(column, color)
@@ -224,9 +227,10 @@ def run_game():
                             if grid.matches_four(column, row, color):
                                 # debugging
                                 print(grid)
+                                grid.clear(keep=color)
                                 game_over = True
-
-                            circle.toggle_color()
+                            else:
+                                circle.toggle_color()
 
         # draw
         screen.fill(game["fill"])
