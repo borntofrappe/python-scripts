@@ -161,13 +161,17 @@ def run_game():
 
     # grid setup
     columns = 6
-    rows = 6
+    rows = 5
 
     # r to fit the desired number of rows and columns
     rx = int(game["width"] / (columns * 2))
     ry = int(game["height"] / ((rows + 1) * 2))
-
     r = min(rx, ry)
+
+    grid_width = columns * (r * 2)
+    grid_height = rows * (r * 2)
+    offset_x = int((game["width"] - grid_width) / 2)
+    offset_y = int((game["height"] - (r * 2) - grid_height))
 
     # colors
     colors = [(180, 30, 30), (180, 180, 30)]
@@ -197,20 +201,22 @@ def run_game():
                     grid.clear()
                     game_over = False
                 else:
-                    cx = pygame.mouse.get_pos()[0]
-                    column = cx // (rx * 2)
-                    cell = grid.add_to_column(column, player)
-                    if cell:
-                        column, row = cell
-                        if grid.matches_four(column, row, player):
-                            print(grid)
-                            game_over = True
-                        if player == "R":
-                            player = "Y"
-                        else:
-                            player = "R"
+                    cx = circle_input.get_cx()
+                    if cx > offset_x // 2 and cx < game["width"] - offset_x // 2:
+                        column = (cx - offset_x) // (r * 2)
+                        cell = grid.add_to_column(column, player)
+                        if cell:
+                            column, row = cell
+                            if grid.matches_four(column, row, player):
+                                # # debugging
+                                # print(grid)
+                                game_over = True
+                            if player == "R":
+                                player = "Y"
+                            else:
+                                player = "R"
 
-                        circle_input.toggle_color()
+                            circle_input.toggle_color()
 
         # draw
         screen.fill(game["fill"])
@@ -223,8 +229,8 @@ def run_game():
             elif cell["value"] == "Y":
                 color = colors[1]
 
-            cx = (cell["column"]) * rx * 2 + rx
-            cy = (cell["row"] + 1) * ry * 2 + ry + 1
+            cx = cell["column"] * (r * 2) + r + offset_x
+            cy = (cell["row"] + 1) * (r * 2) + r + offset_y
 
             pygame.draw.circle(screen, color, (cx, cy), r)
 

@@ -301,32 +301,49 @@ I say superfluous since the list of tuples is set up earlier in the function.
 
 ## Grid
 
-Picking up from [the previous script](), the idea is to set up a grid.
+Picking up from [the previous project](https://github.com/borntofrappe/python-scripts/tree/master/connect-four) creating a game of connect four in the terminal, I can actually use most of the code developed in that script.
+
+In the terminal you end up using two letters to describe the cells, `R` and `T`, and I can actually retain the logic in this more visual take on the game. The issue becomes then how to reconcile the ASCII grid to the circles on screen.
+
+First, set up the grid.
 
 ```py
 grid = Grid(columns, rows)
 ```
 
-I actually thought it'd be necessary to modify the `Grid` class, as to contain instances of the `Circle` class, but it is actually possible to use the logic as-is. The idea is to add characters to the grid, say `R` and `Y` for red and yellow, and then draw circles with varying colors.
+In the game loop then, loop through the grid and draw one circle for each cell. This is actually where I realized that the `circles` list is unnecessary. Consider in pseudo code: loop through the grid:
 
-This also means the `circles` list is no longer needed. Let me try and elaborate.
+```py
+for cell in grid:
+```
 
-- in the `run_game` function create an instance of the grid class
+Draw a circle with a default color:
 
-  ```py
-  grid = Grid(columns, rows)
-  ```
+```py
+for cell in grid:
+  color = (50, 50, 50)
+  pygame.draw.circle(screen, color, ...)
+```
 
-  Initialize also a variable to keep track of the player
+Change the color depending on the cell's own value
 
-  ```py
-  grid = Grid(columns, rows)
-  player = "R"
-  ```
+```py
+for cell in grid:
+  color = (50, 50, 50)
+  if cell == "R":
+    color = (180, 30, 30)
+  elif cell == "Y":
 
-- when drawing the game assets, loop through the grid to draw one circle for each cell
+  pygame.draw.circle(screen, color, ...)
+```
 
-To this end, I decided to create a `get_grid()` method for this precise purpose. Instead of returning the nested list however, I though of returning a flat version of the data structure. This to ultimately have access to individual cells which describe not only the value, but also the coordinates in the grid.
+I ended up using `R` and `Y` to match the red and yellow colors, but the substance remains the same. This also fixes the nagging issue of drawing the un-colored circles. There's no need to duplicate the grid to show the underlying structure.
+
+There are few more considerations in the coordinates of the circle, but let me elaborate more on this approach. The loop takes care of drawing the circle, but following the `MOUSEBUTTONDOWN` event, we need a way to update the specific cell with the desired letter. Luckily, the `add_to_column` function is already equipped to return the cell for a selected column. All that is required is figuring out _where_ that column is.
+
+## Draw Grid
+
+The `Grid` class is expanded with another method, `get_grid`, which returns a flattened version of the 2D list. The idea is to have, for each cell, a dictionary describing the row, column, and character value.
 
 ```py
 cell = {
@@ -336,12 +353,11 @@ cell = {
 }
 ```
 
-In the grid class:
+To this end, I loop through the rows and column appending the desired values to a list.
 
 ```py
-def get_grid(self):
-  grid = []
-  for row in range(self.rows):
+grid = []
+for row in range(self.rows):
     for column in range(self.columns):
       cell = {
           "value": self.grid[row][column],
@@ -349,10 +365,15 @@ def get_grid(self):
           "row": row
       }
       grid.append(cell)
-  return grid
 ```
 
-In the game loop then, loop through the value returned by the method, changing a default color if the individual cell contains a matching value.
+Which is then returned.
+
+```py
+return grid
+```
+
+In the game loop, I then draw the cells with the desired color (currently the default one).
 
 ```py
 for cell in grid.get_grid():
@@ -361,13 +382,177 @@ for cell in grid.get_grid():
     color = colors[0]
   elif cell["value"] == "Y":
     color = colors[1]
+
+  pygame.draw.circle(screen, color, (r, r), r)
 ```
 
-For the coordinates of the shape, the reasoning is a tad more complex. It is not enough to use the column and row, multiplied by the radius.
+The circles are drawn, but every shape is positioned in the top left corner, at the coordinates `(r, r)`.
+
+This is where a bit of adjustment is required. To draw the grid, you can use the value saved under the `row` and `column` key.
 
 ```py
-cx = (cell["column"] + 1) * r
-cy = (cell["row"] + 2) * r
+cx = cell["column"] * (r * 2)
+cy = cell["row"] * (r * 2)
+pygame.draw.circle(screen, color, (cx, cy), r)
 ```
 
-...
+Radius times two to neatly separate the circles diameter by diameter.
+
+This works, but crops the grid on the left and top of the screen. Moreover, the first row overlaps with the input circle.
+
+First, to avoid cropping, add the measure of the radius to both variables.
+
+```py
+cx = cell["column"] * (r * 2) + r
+cy = cell["row"] * (r * 2) + r
+```
+
+This for the same reason `circle_input` is initialized with the `(r, r)` coordinates. `pygame.draw.circle` uses the values for the _center_ of the shape.
+
+For the row then, consider the number of the row plus one. Plus one to skip the row occupied by the input itself.
+
+```py
+cy = (cell["row"] + 1) * (r * 2) + r
+```
+
+## Offset Grid
+
+The grid is successfully drawn with the circles one next to the other. Unfortunately, it doesn't work for every grid. It works perfectly when the grid has `n` columns and `n - 1` rows, since the space is fully occupied by the grid and the extra row for the input. For other combinations however, the grid occupies a smaller area.
+
+One solution to this problem is finding the extra width or height, and add that measure to the grid as to center the structure on screen. I previously considered offsetting the circles, similarly to how you justify the text of a paragraph, but I'd rather offset the entire grid and keep the circles close to one another.
+
+For the extra width and height:
+
+1. consider the space occupied by the columns and row of circles with a radius `r`
+
+   ```py
+   grid_width = columns * (r * 2)
+   grid_height = row * (r * 2)
+   ```
+
+1. subtract the measure from the width and height of the screen.
+
+   ```py
+   offset_x = game["width"] - grid_width
+   offset_y = game["height"] - grid_height
+   ```
+
+1. halve the measure to keep as much space left and right of the grid. This making sure to return an integer value, with the `//` double slash operator or the `int()` function.
+
+   ```py
+   offset_x = (game["width"] - grid_width) // 2
+   offset_y = int((game["height"] - grid_height) / 2)
+   ```
+
+   Just pick one.
+
+1. add the measure to the `cx` and `cy` coordinates.
+
+   ```py
+   cx = cell["column"] * (r * 2) + r + offset_x
+   cy = cell["column"] * (r * 2) + r + offset_y
+   ```
+
+It works, almost. The grid is cropped at the bottom, with only half of the last row visible on the screen. This is because the height doesn't take into consideration, yet, that the first row is already occupied by the input circle.
+
+```diff
+- offset_y = int((game["height"] - grid_height) / 2)
++ offset_y = int((game["height"] - (r * 2) - grid_height) / 2)
+```
+
+Cool. One last touch though. The grid is now centered, in both dimensions. If you'd want to position the structure at the bottom of the screen, you'd have to modify the vertical offset.
+
+```diff
+- offset_y = int((game["height"] - (r * 2) - grid_height) / 2)
++ offset_y = int((game["height"] - (r * 2) - grid_height))
+```
+
+A matter of preference.
+
+## Add to column
+
+The grid is drawn and centered, but currently doesn't change in color. This is fixed in the `if` statement reacting to the `MOUSEBUTTONDOWN` event.
+
+Previously, I added a circle to a list, using the coordinate of the input circle. Here, we need instead to retrieve the column matching the coordinate. The `add_to_column` function developed in the [previous script]() already takes care of adding a specific letter to the grid, if possible. This means much of the hard work is already done in the `Grid` class.
+
+- initialize a variable for the player
+
+  ```py
+  player = "R"
+  ```
+
+- in the game loop, retrieve the horizontal coordinate of the input circle.
+
+  ```py
+  cx = circle_input.get_cx()
+  ```
+
+  It is actually equivalent to use the mouse object and the `get_pos()` function, since the shape matches the cursor in value.
+
+- if the coordinate falls within the range described by the grid (consider the horizontal offset)
+
+  ```py
+  if cx > offset_x // 2 and cx < game["width"] - offset_x // 2:
+  ```
+
+- compute the column considering the diameter of the circles themselves
+
+  ```py
+  column = (cx - offset_x) // (r * 2)
+  ```
+
+  The offset is removed to consider only the space occupied by the grid.
+
+Luckily, the `add_to_column` function is already equipped to add the letter to the column. Moreover, it returns the coordinates of this cell, which can be then used to find a possible match.
+
+```py
+cell = grid.add_to_column(column, player)
+if cell:
+  # consider a match
+```
+
+The logic is copy-pasted from the previous project. Find a possible match:
+
+```py
+column, row = cell
+if grid.matches_four(column, row, player):
+  # game over
+  # do something
+```
+
+Past the game over check, update the player and toggle the appearance of the input circle.
+
+```py
+if player == "R":
+  player = "Y"
+else:
+  player = "R"
+
+circle_input.toggle_color()
+```
+
+## Game Over
+
+Instead of adding text describing the winning player, I opted to add a boolean describing a `game_over` state.
+
+Set to false in the `run_game` function, it is flipped to true in the `if` statement describing the match.
+
+```py
+column, row = cell
+if grid.matches_four(column, row, player):
+  game_over = True
+```
+
+And it is then used at the root of the `MOUSEBUTTONDOWN` event.
+
+```py
+if event.type == pygame.MOUSEBUTTONDOWN:
+  if game_over:
+    grid.clear()
+    game_over = False
+
+  else:
+    # play
+```
+
+The `grid.clear()` function re-initializes the grid so that every cell is stripped of its existing values. This allows to play the game from the beginning.
