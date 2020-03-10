@@ -531,7 +531,7 @@ else:
 circle_input.toggle_color()
 ```
 
-## Game Over
+## Game over
 
 Instead of adding text describing the winning player, I opted to add a boolean describing a `game_over` state.
 
@@ -556,3 +556,136 @@ if event.type == pygame.MOUSEBUTTONDOWN:
 ```
 
 The `grid.clear()` function re-initializes the grid so that every cell is stripped of its existing values. This allows to play the game from the beginning.
+
+## Player & color
+
+There might be a better way to combine the player and color values, but I opted to use a dictionary using the player as the key, the tuples as the values.
+
+```py
+player = "R"
+colors = {
+    "R": (180, 30, 30),
+    "Y": (180, 180, 30)
+}
+```
+
+The circle input is always initialized with a list of colors.
+
+```py
+circle_input = Circle(r, r, r, colors[player], [colors["R"], colors["Y"]])
+```
+
+And the circlea are drawn using the color matching the value of the individual cell.
+
+```py
+color = (40, 40, 40)
+  if cell["value"] != " ":
+    color = colors[cell["value"]]
+```
+
+## Color
+
+Thinking it through, I decided to ditch the `player` variable, and focus on the color instead. This required a few updates all throughout the script, but honestly, I think it was worth it.
+
+First off, update the `Circle` class with a getter function for the list of colors.
+
+```py
+def get_colors(self):
+  return self.colors
+```
+
+In the grid class, include two new variables in `color_default` and `colors`. The first one is used to initialize the grid with a default tuple. The second one is used to alternate between values.
+
+the color of the individual circle as well as its possible color values. Instead of initializing the grid with empty spaces then, use the tuple for
+
+```py
+def __init__(self, columns, rows, color_default, colors):
+  self.columns = columns
+  self.rows = rows
+  self.color = color
+  self.colors = colors
+  self.grid = [[color_default for c in range(columns)] for r in range(rows)]
+```
+
+Since the grid contains a tuple, a few more adjustments are required elsewhere in the class.
+
+- in the `__str__` function, since I plan to keep the ASCII structure, use the value of the individual cells to populate the grid with `R` and `Y` characters.
+
+  ```py
+  for row in self.grid:
+    grid += "|"
+    for cell in row:
+        char = " "
+        if cell == self.colors[0]:
+            char = "R"
+        elif cell == self.colors[1]:
+            char = "Y"
+        grid += char.center(spaces, " ") + "|"
+    grid += "\n"
+  ```
+
+- in the `get_grid` function, but this is more of an aesthetic change, populate the grid using a key of `color` instead of `value`
+
+  ```diff
+  cell = {
+  -  "value": self.grid[row][column],
+  +  "color": self.grid[row][column],
+  }
+  ```
+
+- in the `clear` function, reinitialize the grid with the default value
+
+  ```diff
+  - self.grid = [[" " for c in range(self.columns)] for r in range(self.rows)]
+  + self.grid = [[self.color_default for c in range(self.columns)] for r in range(self.rows)]
+  ```
+
+- in the `matches_four` function, and this is likely the biggest change, update the arguments to receive a color.
+
+  When checking the row, diagonals and column then, convert the tuples to strings.
+
+  ```diff
+  - match += self.grid[row][c + c_min]
+  + match += str(self.grid[row][c + c_min])
+  ```
+
+There might be other changes in the class, but they relate mostly to update the label `player` to be `color`, and to wrap the tuples in the `str` function when comparing the color values.
+
+With the updated class, the `run_game` function can make due without a `player` variable.
+
+- initialize the grid with the defaul color and list of possible color values
+
+```py
+color_default = (40, 40, 40)
+grid = Grid(columns, rows, color_default, colors)
+```
+
+When drawing the cells, simply use the `color` property from the dictionary describing the cell.
+
+```py
+for cell in grid.get_grid():
+    color = cell["color"]
+```
+
+When modifying the grid following the `MOUSEBUTTONDOWN` event, add the tuple describing the input circle instead of the previous characters.
+
+```py
+color = circle_input.get_color()
+cell = grid.add_to_column(column, color)
+```
+
+As mentioned at the beginning of the section, it takes a few adjustments to reach this point, but we now have a grid populated by tuples, and these tuples are directly used to color the different shapes.
+
+## Circle
+
+A minor tweak to the syntax: since there is just one instance of the `Circle` class, I decided to rename `circle_input` as simply `circle`.
+
+<!-- TODO EXPLAIN REWRITE -->
+
+<!-- ## Game over/2
+
+Clear everything, but keep the color of the winning player. -->
+
+```
+
+```
