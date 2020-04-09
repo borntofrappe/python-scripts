@@ -10,3 +10,4 @@
 | [snake](https://repl.it/@borntofrappe/snake)               | Create a game of snake with pygame                    | pygame, class                       |
 | [connect-four](https://repl.it/@borntofrappe/connect-four) | Match cells of the same color in the terminal console | list comprehension, try except else |
 | connect-four-visuals                                       | Match shapes of the same color                        | pygame, tuple                       |
+| line-chart                                                 | Plot data from Google Trends and using matplotlib     | matplotlib, pandas                  |
