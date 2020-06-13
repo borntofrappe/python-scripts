@@ -1,20 +1,22 @@
-# Arithmetic Formatter
+# [Arithmetic Formatter](https://repl.it/@borntofrappe/fcc-arithmetic-formatter)
 
 > First project of five to earn the **Scientific Computing with Python** certification on freeCodeCamp.
 
-At the time of writing, the curriculum is not public yet, but I'll add a link as soon as it's made avaulalble.
+At the time of writing, the freeCodeCamp team is working on the certification, and the projects are not publicly available yet.
 
-Since the curriculum is actively being developed, the project also includes more than one script:
+Since the curriculum is actively being developed, this folder also includes more than one script:
 
 - `main` imports the formatting function(s) and runs them with a variety of input options
 
-- `arithmetic_arranger` provides a first function to format arithmetic operations in the desired structure. This is however a script created in January 2020, and for a previous version of the freeCodeCamp curriculum.
+- `arithmetic_arranger` formats arithmetic operations. This is however a script created in January 2020, and for a previous version of the freeCodeCamp curriculum.
 
-- `arithmetic_formatter` formats arithmetic operations, and is meant to describe the code submitted to the freeCodeCamp platform.
+- `arithmetic_formatter` formats arithmetic operations. This is meant to describe the code submitted to the freeCodeCamp platform.
+
+It is teaching to see not only how the project has evolved, but also my approach to the problem at hand.
 
 ## Assignment
 
-The project describes a series of requirements, but in the simplest terms, the project can be described in terms of the input and output values of the would-be function:
+The project describes a series of requirements, but in the simplest terms, it can summed up in terms of input and output values:
 
 - input: a list of strings describing a series of arithmetic operations
 
@@ -36,7 +38,7 @@ To this output:
 
 Again, there are serveral requirements the project needs to satisfy, but that is the core of the project.
 
-### Formatting
+## Formatting
 
 To format the arithmetic operations, I decided to follow this rough plan:
 
@@ -62,7 +64,7 @@ To format the arithmetic operations, I decided to follow this rough plan:
 
 - join the strings describing the rows, including a `\n` new line character to have the rows visually on top of one another
 
-### Error handling
+## Error handling
 
 Following the project guidelines, the function needs to return a string with an error message in the following instances:
 
@@ -73,3 +75,52 @@ Following the project guidelines, the function needs to return a string with an 
 - the operand contains characters other than numbers. You can achieve this in more than one way, but personally, I opted to import the `re` module and checked the strings with a regular expression
 
 - the operand have more than four characters. I checked the length of the strings describing the operands, but you can very well parse the strings to integer, and then check the values are less than `9999`
+
+The first condition can be tested immediately, while the others are included in the for loop considering the individual operations.
+
+## Good to know
+
+- check if a dictionary has a particular key
+
+  ```py
+  if "key" in dictionary:
+  ```
+
+  With the `not` operator you can also check if a dictionary has not a key. This comes in handy to add the field for the fourth row if one is not already available
+
+  ```py
+  if "fourth" not in rows:
+  ```
+
+- join a list to make a string
+
+  This required a bit of an adjustment coming from JavaScript. Instead of using the `.join()` method on the collection, you apply the function to the string used as a connector between the items.
+
+  In most practical terms:
+
+  ```py
+  names_list = ["George", "Timothy", "Ella"]
+  names_string = ", ".join(names_list) # "George, Timothy, Ella"
+  ```
+
+  Join together the items with the string `,`
+
+- get the values of a dictionary
+
+  This is actually a one liner
+
+  ```py
+  rows_values = rows.values()
+  ```
+
+  In a previous version I considered the rows individually, accessing the lists with `rows["first"]`, `rows["second"]` and so forth, but this solution is preferable. It allows to have a list of three or four lists depending on the structure of the dictionary. No need to further check if the dictionary has a fourth row
+
+- remove the last character from a string
+
+  This comes in the larger topic of _slices_, and is rapidly achieved by considering every letter from the first up to the penultimate character.
+
+  ```py
+  return output[:-1]
+  ```
+
+  It is handy to remove the `\n` new line. This is added after each row, but is superfluous for the last row..

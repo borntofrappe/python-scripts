@@ -48,13 +48,9 @@ def arithmetic_formatter(problems, show_solution=False):
 
     spaces = 4
     column_spaces = " " * spaces
-    output += column_spaces.join(rows["first"])
-    output += "\n"
-    output += column_spaces.join(rows["second"])
-    output += "\n"
-    output += column_spaces.join(rows["third"])
-    if show_solution:
+    rows_values = rows.values()
+    for row in rows_values:
+        output += column_spaces.join(row)
         output += "\n"
-        output += column_spaces.join(rows["fourth"])
 
-    return output
+    return output[:-1]
