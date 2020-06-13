@@ -12,3 +12,4 @@
 | connect-four-visuals                                                           | Match shapes of the same color                        | pygame, tuple                       |
 | line-chart                                                                     | Plot data from Google Trends and using matplotlib     | matplotlib, pandas                  |
 | [arithmetic-formatter](https://repl.it/@borntofrappe/fcc-arithmetic-formatter) | Format arithmetic operations in rows and columns      | dictionary, list, string            |
+| [time-calculator]()                                                            | Add a duration to a start time                        |                                     |
