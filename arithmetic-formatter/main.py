@@ -1,5 +1,4 @@
 from arithmetic_arranger import arithmetic_arranger
+from arithmetic_formatter import arithmetic_formatter
 
-print(arithmetic_arranger(["32 + 698", "3801 - 2", "45 + 43", "123 + 49"]))
-print(arithmetic_arranger(["222 + 10", "100 + 25"]))
-print(arithmetic_arranger(["31 / 10"]))
+print(arithmetic_formatter(["331 + 10", "31 - 585"], True))
