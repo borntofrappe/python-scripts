@@ -8,11 +8,13 @@ Since the curriculum is actively being developed, this folder also includes more
 
 - `main` imports the formatting function(s) and runs them with a variety of input options
 
-- `arithmetic_arranger` formats arithmetic operations. This is however a script created in January 2020, and for a previous version of the freeCodeCamp curriculum.
+- `arithmetic_arranger_previous` formats arithmetic operations. This is however a script created in January 2020, and for a previous version of the freeCodeCamp curriculum.
 
-- `arithmetic_formatter` formats arithmetic operations. This is meant to describe the code submitted to the freeCodeCamp platform.
+- `arithmetic_arranger` formats arithmetic operations. This is meant to describe the code submitted to the freeCodeCamp platform.
 
 It is teaching to see not only how the project has evolved, but also my approach to the problem at hand.
+
+_Please note_: `arithmetic_arranger_previous` is not equipped to consider the optional second argument. This feature was not present in the original project.
 
 ## Assignment
 

@@ -1,43 +1,56 @@
-def arithmetic_arranger(problems):
+import re
+
+
+def arithmetic_arranger(problems, show_solution=False):
     if len(problems) > 5:
-        return 'Error: Too many problems.'
-    else:
-        # list in which to store the different operations, through nested list describing the lines
-        arrangements = []
-        for problem in problems:
-            # the numbers and the operator are handily separated by a white space
-            split = problem.split(' ')
-            num_1 = split[0]
-            operator = split[1]
-            num_2 = split[2]
+        return "Error: Too many problems."
 
-            # i'm positive there's a better way to handle different conditionals
-            if operator == '+' or operator == '-':
-                if num_1.isnumeric() and num_2.isnumeric():
-                    if len(num_1) <= 4 and len(num_2) <= 4:
-                        # include the three lines in a list
-                        length = max([len(num_1), len(num_2)]) + 2
-                        arrangement = [
-                            num_1.rjust(length, " "),
-                            operator + num_2.rjust(length - 1, " "),
-                            '-'*length
-                        ]
-                        arrangements.append(arrangement)
-                    else:
-                        return('Error: Numbers cannot be more than four digits.')
-                else:
-                    return('Error: Numbers must only contain digits.')
-            else:
-                return('Error: Operator must be \'+\' or \'-\'.')
+    rows = {
+        "first": [],
+        "second": [],
+        "third": []
+    }
+    output = ""
 
-        # still unsure as the best way to concatenate the nested strings
-        arranged_problems = ''
-        for i in list(range(len(arrangements[0]))):
-            for j in list(range(len(arrangements))):
-                arranged_problems += arrangements[j][i]
-                if(j < len(arrangements) - 1):
-                    arranged_problems += ' '*4
-            if(i < len(arrangements[0]) - 1):
-                arranged_problems += '\n'
+    for problem in problems:
+        operand_1, operator, operand_2 = problem.split(" ")
+        if operator == "*" or operator == "/":
+            return "Error: Operator must be '+' or '-'."
+        if re.search("\D", operand_1) or re.search("\D", operand_2):
+            return "Error: Numbers must only contain digits."
+        if len(operand_1) > 4 or len(operand_2) > 4:
+            return "Error: Numbers cannot be more than four digits."
 
-        return arranged_problems
+        max_len = max(len(operand_1), len(operand_2))
+        row_width = max_len + 2
+
+        row_first = operand_1.rjust(row_width, " ")
+        row_second = operator + " " + operand_2.rjust(max_len, " ")
+        row_third = "-" * row_width
+
+        rows["first"].append(row_first)
+        rows["second"].append(row_second)
+        rows["third"].append(row_third)
+
+        if show_solution:
+            if "fourth" not in rows:
+                rows["fourth"] = []
+            num_1 = int(operand_1)
+            num_2 = int(operand_2)
+            solution = num_1
+            if operator == "+":
+                solution += num_2
+            elif operator == "-":
+                solution -= num_2
+
+            row_fourth = str(solution).rjust(row_width, " ")
+            rows["fourth"].append(row_fourth)
+
+    spaces = 4
+    column_spaces = " " * spaces
+    rows_values = rows.values()
+    for row in rows_values:
+        output += column_spaces.join(row)
+        output += "\n"
+
+    return output[:-1]
