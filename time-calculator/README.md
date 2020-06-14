@@ -8,4 +8,4 @@ _Please note_: The paragraph introducing the arithmetic formatter is valid here 
 
 - a link to the project will be included when the certification is live
 
-- there are actually two scripts. One created in the end of January 2020, one in June 2020 as I reviewed the project. This last one will be submitted to the freeCodeCamp platform, but it is teaching/intriguing to see how my solution has changed in light of the knowledge I gained in between the two dates.
+- there are actually two scripts. One created in the end of January 2020, one in June 2020 as I reviewed the project. The two differ since the project was updated with additional requirements
