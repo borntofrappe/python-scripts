@@ -80,7 +80,9 @@ Following the project guidelines, the function needs to return a string with an 
 
 The first condition can be tested immediately, while the others are included in the for loop considering the individual operations.
 
-## Good to know
+## Lessons learned
+
+The project gave me the perfect opportunity to learn a thing or two about the Python language.
 
 - check if a dictionary has a particular key
 
@@ -88,7 +90,7 @@ The first condition can be tested immediately, while the others are included in 
   if "key" in dictionary:
   ```
 
-  With the `not` operator you can also check if a dictionary has not a key. This comes in handy to add the field for the fourth row if one is not already available
+  With the `not` operator, you can also check if a dictionary does not have a key. In the particular project I've used the syntax to add the key for the fourth row if one is not already available
 
   ```py
   if "fourth" not in rows:
@@ -126,3 +128,41 @@ The first condition can be tested immediately, while the others are included in 
   ```
 
   It is handy to remove the `\n` new line. This is added after each row, but is superfluous for the last row..
+
+## Update
+
+In order to check that the numbers contain only digits, I first used a regular expression. However, this requires the script to import the `re` module. In the moment the assignment asks not to use additional libraries, replace the functionality with a `try` `except` block.
+
+Instead of checking for a non-digit character as follows:
+
+```py
+import re
+
+re.search("\D", operand_1)
+```
+
+Try to parce the operands to numbers
+
+```py
+try:
+  num_1 = int(operand_1)
+  num_2 = int(operand_2)
+except:
+  return "Error: Numbers must only contain digits."
+```
+
+You can even be more specific and add the precise error which rises if you pass a string to the `int()` function.
+
+```py
+except ValueError:
+  return "Error: Numbers must only contain digits."
+```
+
+The `try` `except` syntax is actually complemented by a `else` block, which describes what to do if no error is registered.
+
+```py
+except ValueError:
+  return "Error: Numbers must only contain digits."
+else:
+  # format output string
+```
