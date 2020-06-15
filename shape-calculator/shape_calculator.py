@@ -27,11 +27,7 @@ class Rectangle:
         if self.width > 50 or self.height > 50:
             return "Too big for picture."
 
-        output = ""
-        for row in range(self.height):
-            output += "*" * self.width
-            output += "\n"
-        return output
+        return ("*" * self.width + "\n") * self.height
 
     def get_amount_inside(self, shape):
         width_inside = self.width // shape.width
