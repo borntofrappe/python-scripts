@@ -13,3 +13,4 @@
 | line-chart                                                                    | Plot data from Google Trends and using matplotlib     | matplotlib, pandas                  |
 | [arithmetic-formatter](https://repl.it/@borntofrappe/fcc-arithmetic-arranger) | Format arithmetic operations in rows and columns      | dictionary, list, string            |
 | [time-calculator](https://repl.it/@borntofrappe/fcc-time-calculator)          | Add a duration to a start time                        |                                     |
+| shape-calculator                                                              | Practice with object oriented programming             | class, object                       |
