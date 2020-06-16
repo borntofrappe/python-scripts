@@ -4,8 +4,8 @@ class Category:
         output += self.name.center(30, "*")
         for entry in self.ledger:
             amount = round(entry["amount"], 2)
-            whole, decimal = str(float(amount)).split(".")
-            amount_string = whole + "." + decimal.ljust(2, "0")
+            whole, fractional = str(float(amount)).split(".")
+            amount_string = whole + "." + fractional.ljust(2, "0")
             description = entry["description"]
             output = output + "\n" + \
                 description[:23].ljust(23, " ") + \
@@ -54,36 +54,35 @@ class Category:
 
         description_destination = "Transfer from " + self.name
         destination.deposit(amount, description_destination)
-
         return True
 
 
 def create_spend_chart(categories):
     output = ""
     output += "Percentage spent by category\n"
+
     percentages = list(reversed([i * 10 for i in range(11)]))
     percentages_len_max = len(str(max(percentages)))
 
-    # compute percentages
-    spenditures = []
-    spenditures_total = 0
+    withdrawals = []
+    withdrawals_total = 0
     for category in categories:
-        spenditure = 0
+        withdrawal = 0
         for entry in category.ledger:
             if entry["amount"] < 0:
-                spenditure += abs(entry["amount"])
-        spenditures.append(spenditure)
-        spenditures_total += spenditure
+                withdrawal += abs(entry["amount"])
+        withdrawals.append(withdrawal)
+        withdrawals_total += withdrawal
 
-    spenditures_percentages = [
-        round(spenditure / spenditures_total * 100) for spenditure in spenditures]
+    withdrawals_percentages = [
+        round(withdrawal / withdrawals_total * 100) for withdrawal in withdrawals]
 
     for percentage in percentages:
         output += str(percentage).rjust(percentages_len_max, " ")
         output += "|"
-        for spenditures_percentage in spenditures_percentages:
+        for withdrawals_percentage in withdrawals_percentages:
             output += " "
-            if spenditures_percentage >= percentage:
+            if withdrawals_percentage >= percentage:
                 output += "o"
             else:
                 output += " "
@@ -97,6 +96,7 @@ def create_spend_chart(categories):
 
     names = [category.name for category in categories]
     names_len = [len(name) for name in names]
+
     for index_column in range(max(names_len)):
         output += " " * (percentages_len_max + 1)
         for index_row in range(len(names)):

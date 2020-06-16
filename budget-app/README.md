@@ -1,4 +1,4 @@
-# Budget App
+# [Budget App](https://repl.it/@borntofrappe/fcc-budget-app)
 
 > Third project of five to earn the **Scientific Computing with Python** certification on freeCodeCamp.
 
@@ -18,99 +18,20 @@ It requires to complete a `Category` class, as well as a `create_spend_chart` fu
 
 ### Category
 
-There are plenty of rules regarding the `Category` class. I won't go into details regarding how each object is supposed to look like when printed as a string, but here a few notes regarding the necessary attributes and methods.
+The category specifies two attributes and a series of methods. Each instance allows to define a budget category, and then enact a series of operations through said methods: deposits, withdraws, transfers. There are also a couple of functions to obtain the total, and check if the category has enough funds, but those methods are relatively easier to parse.
 
-#### Attributes
+The `__str__` function is perhaps the more convoluted one, but the goal is to format the budget category with a definite format.
 
-Each instance is initialized with a string specifying the name.
-
-```py
-food = Category("Food")
+```code
+*******Title*********
+initial deposi 100.25
+entry decscrip -50.00
+decscription     2.54
+Total: 52.79
 ```
-
-Therefore, specify a field for the name of the category.
-
-```py
-def __init__(self, name):
-    self.name = name
-```
-
-`self.ledger` is added as a list and an instance variable.
-
-```py
-def __init__(self, name):
-    self.name = name
-    self.ledger = []
-```
-
-The idea is to append to the ledger the deposit/withdraw/transfer operations later enacted on the category.
-
-#### Methods
-
-In order of usefulness, so to speak:
-
-- `get_balance` tallies the amounts, and returns the balance
-
-  ```py
-  def get_balance(self):
-      balance = 0
-      for entry in self.ledger:
-          balance += entry["amount"]
-      return round(balance, 2)
-  ```
-
-  `round` allows to consider up to 2 decimal digits
-
-- `check_funds` describes whether an input amount is available
-
-  ```py
-  def check_funds(self, amount):
-      balance = self.get_balance()
-      return balance >= amount
-  ```
-
-- `deposit` creates an entry in the ledger
-
-  ```py
-  def deposit(self, amount, description=""):
-      entry = {
-          "amount": amount,
-          "description": description
-      }
-      self.ledger.append(entry)
-  ```
-
-  If no description is given, use an empty string
-
-- `withdraw` checks if the funds allow to withdraw the input amount, and if so creates a matching entry
-
-  ```py
-  def withdraw(self, amount, description=""):
-      if not self.check_funds(amount):
-          return False
-
-      entry = {
-          "amount": amount * -1,
-          "description": description
-      }
-      self.ledger.append(entry)
-      return True
-  ```
-
-- `transfer` checks if funds allow for the transfer of the input amount, and then fires a withdraw/deposit operation considering a destination category
-
-  ```py
-  def transfer(self, amount, destination):
-    if not self.check_funds(amount):
-        return False
-
-    description_source = "Transfer to " + destination.name
-    self.withdraw(amount, description_source)
-
-    description_destination = "Transfer from " + self.name
-    destination.deposit(amount, description_destination)
-
-    return True
-  ```
 
 ### create_spend_chart
+
+The function takes as input a list of categories, and produces a bar chart with ASCII characters. To detail the height of the bars, compute the total expenditure, and then the percentage of each individual category.
+
+The rest is a tedious exercise in formatting the string with whitespace, `-` dash and `|` pipe characters.

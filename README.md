@@ -14,4 +14,4 @@
 | [arithmetic-formatter](https://repl.it/@borntofrappe/fcc-arithmetic-arranger) | Format arithmetic operations in rows and columns                                  | dictionary, list, string manipulation |
 | [time-calculator](https://repl.it/@borntofrappe/fcc-time-calculator)          | Add a duration to a start time                                                    | integer division, string manipulation |
 | [shape-calculator](https://repl.it/@borntofrappe/fcc-shape-calculator)        | Practice with object oriented programming                                         | class, object                         |
-| budget-app                                                                    | Create a "Category" class that can be used to create different budget categories. | class, object                         |
+| [budget-app](https://repl.it/@borntofrappe/fcc-budget-app)                    | Create a "Category" class that can be used to create different budget categories. | class, object                         |
