@@ -1,8 +1,8 @@
 # Budget App
 
-> Fourth project of five to earn the **Scientific Computing with Python** certification on freeCodeCamp.
+> Third project of five to earn the **Scientific Computing with Python** certification on freeCodeCamp.
 
-The note introducing other projects for the freeCodeCamp certifications is repeated here to be exhaustive:
+The note introducing other projects for the freeCodeCamp certification is repeated here to be exhaustive:
 
 - the freeCodeCamp curriculum is under development
 

@@ -2,19 +2,13 @@
 
 > First project of five to earn the **Scientific Computing with Python** certification on freeCodeCamp.
 
-At the time of writing, the freeCodeCamp team is working on the certification, and the projects are not publicly available yet.
+The note introducing other projects for the freeCodeCamp certification is repeated here to be exhaustive:
 
-Since the curriculum is actively being developed, this folder also includes more than one script:
+- the freeCodeCamp curriculum is under development
 
-- `main` imports the formatting function(s) and runs them with a variety of input options
+- a link to the assignment will be included when the certification will be live
 
-- `arithmetic_arranger_previous` formats arithmetic operations. This is however a script created in January 2020, and for a previous version of the freeCodeCamp curriculum.
-
-- `arithmetic_arranger` formats arithmetic operations. This is meant to describe the code submitted to the freeCodeCamp platform.
-
-It is teaching to see not only how the project has evolved, but also my approach to the problem at hand.
-
-_Please note_: `arithmetic_arranger_previous` is not equipped to consider the optional second argument. This feature was not present in the original project.
+- there are actually two scripts. One created in the end of January 2020, one in June 2020 as I reviewed the project. The two differ since the project was updated with additional requirements, and since I've learned more about the Python language
 
 ## Assignment
 
