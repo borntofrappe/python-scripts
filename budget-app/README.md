@@ -18,9 +18,7 @@ It requires to complete a `Category` class, as well as a `create_spend_chart` fu
 
 ### Category
 
-There are plenty of rules regarding the `Category` class, especially regarding how each instance object is supposed to look when printed as a string.
-
-Putting the `__str__` method on the back burner for a moment, here the rules describing the attributes and methods of the class.
+There are plenty of rules regarding the `Category` class. I won't go into details regarding how each object is supposed to look like when printed as a string, but here a few notes regarding the necessary attributes and methods.
 
 #### Attributes
 
@@ -49,15 +47,15 @@ The idea is to append to the ledger the deposit/withdraw/transfer operations lat
 
 #### Methods
 
-Let me describe the methods in a different order than the assignment. In order of usefulness, so to speak:
+In order of usefulness, so to speak:
 
 - `get_balance` tallies the amounts, and returns the balance
 
   ```py
   def get_balance(self):
       balance = 0
-      for voice in self.ledger:
-          balance += voice["amount"]
+      for entry in self.ledger:
+          balance += entry["amount"]
       return round(balance, 2)
   ```
 
@@ -71,31 +69,31 @@ Let me describe the methods in a different order than the assignment. In order o
       return balance >= amount
   ```
 
-- `deposit` creates a voice in the ledger
+- `deposit` creates an entry in the ledger
 
   ```py
   def deposit(self, amount, description=""):
-      voice = {
+      entry = {
           "amount": amount,
           "description": description
       }
-      self.ledger.append(voice)
+      self.ledger.append(entry)
   ```
 
   If no description is given, use an empty string
 
-- `withdraw` checks if the funds allow to withdraw the input amount, and if so creates a matching entry in the ledger
+- `withdraw` checks if the funds allow to withdraw the input amount, and if so creates a matching entry
 
   ```py
   def withdraw(self, amount, description=""):
       if not self.check_funds(amount):
           return False
 
-      voice = {
+      entry = {
           "amount": amount * -1,
           "description": description
       }
-      self.ledger.append(voice)
+      self.ledger.append(entry)
       return True
   ```
 
@@ -115,4 +113,4 @@ Let me describe the methods in a different order than the assignment. In order o
     return True
   ```
 
-  <!-- ### create_spend_chart -->
+### create_spend_chart

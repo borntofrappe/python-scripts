@@ -56,3 +56,58 @@ class Category:
         destination.deposit(amount, description_destination)
 
         return True
+
+
+def create_spend_chart(categories):
+    output = ""
+    output += "Percentage spent by category\n"
+    percentages = list(reversed([i * 10 for i in range(11)]))
+    percentages_len_max = len(str(max(percentages)))
+
+    # compute percentages
+    spenditures = []
+    spenditures_total = 0
+    for category in categories:
+        spenditure = 0
+        for entry in category.ledger:
+            if entry["amount"] < 0:
+                spenditure += abs(entry["amount"])
+        spenditures.append(spenditure)
+        spenditures_total += spenditure
+
+    spenditures_percentages = [
+        round(spenditure / spenditures_total * 100) for spenditure in spenditures]
+
+    for percentage in percentages:
+        output += str(percentage).rjust(percentages_len_max, " ")
+        output += "|"
+        for spenditures_percentage in spenditures_percentages:
+            output += " "
+            if spenditures_percentage >= percentage:
+                output += "o"
+            else:
+                output += " "
+            output += " "
+
+        output += " \n"
+
+    output += " " * (percentages_len_max + 1)
+    output += "---" * len(categories)
+    output += "-\n"
+
+    names = [category.name for category in categories]
+    names_len = [len(name) for name in names]
+    for index_column in range(max(names_len)):
+        output += " " * (percentages_len_max + 1)
+        for index_row in range(len(names)):
+            output += " "
+            try:
+                letter = names[index_row][index_column]
+            except IndexError:
+                output += " "
+            else:
+                output += letter
+            output += " "
+        output += " \n"
+
+    return output[:-1]
