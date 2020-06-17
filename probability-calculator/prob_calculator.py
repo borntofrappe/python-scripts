@@ -1,6 +1,5 @@
 import copy
 import random
-# Consider using the modules imported above.
 
 
 class Hat:
@@ -9,7 +8,6 @@ class Hat:
         for key in kwarg.keys():
             for n in range(kwarg[key]):
                 contents.append(key)
-
         self.contents = contents
 
     def draw(self, number):
@@ -17,23 +15,25 @@ class Hat:
         if number >= len(contents):
             return contents
 
-        hat = []
+        sample = []
 
         for n in range(number):
             len_contents = len(contents)
             index = random.randrange(len_contents)
             ball = contents[index]
-            hat.append(ball)
+            sample.append(ball)
             contents = contents[0:index] + contents[index + 1:]
 
-        return hat
+        # update contents
+        self.contents = contents
+        return sample
 
 
 def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
     count = 0
     for n in range(num_experiments):
-        hat_copy = copy.deepcopy(hat)
-        sample = hat_copy.draw(num_balls_drawn)
+        example = copy.copy(hat)
+        sample = example.draw(num_balls_drawn)
         success = True
         for key in expected_balls.keys():
             if sample.count(key) < expected_balls[key]:

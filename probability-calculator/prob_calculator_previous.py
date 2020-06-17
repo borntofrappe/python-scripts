@@ -32,7 +32,7 @@ class Hat:
         return balls
 
 
-def experiment(hat, balls_to_draw, num_balls_drawn, num_experiments):
+def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
     # variable to compute the probability
     # each time we draw the specified balls, increment the counter
     success = 0
@@ -45,9 +45,9 @@ def experiment(hat, balls_to_draw, num_balls_drawn, num_experiments):
         # still need to research for..else
         # but the idea is to terminate the loop if there are no balls of the specified type
         # increment the counter otherwise
-        for ball_to_draw in balls_to_draw:
+        for ball_to_draw in expected_balls:
             count = balls.count(ball_to_draw)
-            if(count < balls_to_draw[ball_to_draw]):
+            if(count < expected_balls[ball_to_draw]):
                 break
         else:
             success += 1
