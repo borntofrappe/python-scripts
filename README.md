@@ -16,3 +16,4 @@
 | [shape-calculator](https://repl.it/@borntofrappe/fcc-shape-calculator)             | Practice with object oriented programming                                            | class, object                         |
 | [budget-app](https://repl.it/@borntofrappe/fcc-budget-app)                         | Create a "Category" class that can be used to create different budget categories.    | class, object                         |
 | [probability-calculator](https://repl.it/@borntofrappe/fcc-probability-calculator) | Write a program to determine the approximate probability of drawing balls at random. |                                       |
+| numpy-stats                                                                        | Use the NumPy library to compute rudimentary statistics for an input matrix          |                                       |
