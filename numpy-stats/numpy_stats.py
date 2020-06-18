@@ -15,8 +15,7 @@ def calculate(list):
         variance = [np.var(matrix, axis=0).tolist(), np.var(
             matrix, axis=1).tolist(), np.var(array).tolist()]
 
-        standard_deviation = [np.std(matrix, axis=0).tolist(), np.std(
-            matrix, axis=1).tolist(), np.std(array).tolist()]
+        standard_deviation = [(np.array(v) ** 0.5).tolist() for v in variance]
 
         max = [np.max(matrix, axis=0).tolist(), np.max(
             matrix, axis=1).tolist(), np.max(array).tolist()]
