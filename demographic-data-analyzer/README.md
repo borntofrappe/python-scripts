@@ -1,4 +1,4 @@
-# Demographic Data Analyzer
+# [Demographic Data Analyzer](https://repl.it/@borntofrappe/fcc-demographic-data-analyzer)
 
 > Second project of five to earn the **Data Analysis with Python** certification on freeCodeCamp.
 
@@ -12,9 +12,7 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 ## Warning(s)
 
-1. Running the script might not work, because the `pd.read_csv` function needs to describe the location of the `csv` value.
-
-   Be sure to update the path with the precise folder.
+1. Unlike the other scripts in this repo, running the code in `main.py` will not work. To have the script work as intended, open the `analyzer` script(s) and update the `path` variable so that pandas is able to find the `.csv` file.
 
    ```py
    path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
@@ -22,15 +20,15 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
    This is true for both files: `analyzer` and `analyzer-previous`.
 
-2. `analyzer-previous.py` **does not** complete the assignment. It seems my inexperience with the pandas library stopped me from answering every question.
+2. `analyzer-previous.py` **does not** complete the assignment. It seems my January-self fell short of answering the last question
 
-3. I added a few rows at the bottom of the spreadsheet to ensure that the `native-country` column has value representative of "India". In slicing the dataset, it seems I ended up without a single data point from the country
+3. the `.csv` file does not describe the full dataset as provided by the assignment. I made the decision to consider a subset, to just illustrate the point of the scripts.
 
 ## Assignment
 
-Starting from a dataset of demographic data (extracted from the 1994 Census database), you must use Pandas to answer a series of questions.
+The goal is to analyze a `.csv` file and answer a series of questions. Questions such as:
 
-- How many people of each race are represented in this dataset? This should be a Pandas series with race names as the index labels. (`race` column)
+- How many people of each race are represented in this dataset? This should be a Pandas series with race names as the index labels
 - What is the average age of men?
 - What is the percentage of people who have a Bachelor's degree?
 - What percentage of people with advanced education (`Bachelors`, `Masters`, or `Doctorate`) make more than 50K?
@@ -40,4 +38,28 @@ Starting from a dataset of demographic data (extracted from the 1994 Census data
 - What country has the highest percentage of people that earn >50K and what is that percentage?
 - Identify the most popular occupation for those who earn >50K in India.
 
-## Lessons learned
+## Further Research
+
+I am less than satisfied with the working. Especially when counting the number of times a certain value is repeated in a column, I found the syntax to be rather convoluted.
+
+```py
+df[df["education"] == "Bachelors"]["education"].count()
+```
+
+Perhaps it's all necessary. `df[df["education"] == "Bachelors"]` returns a dataframe, and using the `count` function immediately would result in a series, not an integer.
+
+A series where each column describe its own count.
+
+```PY
+print(df[df["education"] == "Bachelors"].count())
+
+"""
+age               86
+workclass         86
+fnlwgt            86
+education         86
+...
+"""
+```
+
+That being said, I reiterate the mild dissatisfaction, and urge to research the library some more.
