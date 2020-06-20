@@ -1,9 +1,11 @@
 import pandas as pd
 
+path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
+
 
 def calculate_demographic_data(print_data=True):
     # Read data from file
-    df = pd.read_csv("adulst.data.csv")
+    df = pd.read_csv(path + "data.csv")
 
     # How many of each race are represented in this dataset? This should be a Pandas series with race names as the index labels.
     # ! return a series
@@ -39,11 +41,10 @@ def calculate_demographic_data(print_data=True):
     min_work_hours = df["hours-per-week"].min()
 
     # What percentage of the people who work the minimum number of hours per week have a salary of >50K?
-    num_min_workers = df[df["hours-per-week"] ==
-                         min_work_hours]["hours-per-week"].count()
+    min_workers = df[df["hours-per-week"] == min_work_hours]
 
     rich_percentage = round(
-        num_min_workers / df["hours-per-week"].count() * 100, 1)
+        min_workers[min_workers["salary"] == ">50K"]["salary"].count() / min_workers["salary"].count() * 100, 1)
 
     # What country has the highest percentage of people that earn >50K?
     countries = df["native-country"].value_counts()
@@ -54,7 +55,7 @@ def calculate_demographic_data(print_data=True):
     highest_earning_country = rich_countries_percentages.index[0]
 
     highest_earning_country_percentage = round(
-        df[df["native-country"] == highest_earning_country]["native-country"].count() / df["native-country"].count() * 100, 1)
+        rich_countries[highest_earning_country] / df[df["native-country"] == highest_earning_country]["native-country"].count() * 100, 1)
 
     # Identify the most popular occupation for those who earn >50K in India.
     top_IN_occupation = df[(df["salary"] == ">50K") & (
