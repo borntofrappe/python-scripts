@@ -17,12 +17,14 @@ The note introducing other projects for the freeCodeCamp certification is repeat
    Be sure to update the path with the precise folder.
 
    ```py
-    path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
+   path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
    ```
 
    This is true for both files: `analyzer` and `analyzer-previous`.
 
-2. `analyzer-previous` does not complete the assignment. It seems my inexperience with the pandas library stopped me from answering every question.
+2. `analyzer-previous.py` **does not** complete the assignment. It seems my inexperience with the pandas library stopped me from answering every question.
+
+3. I added a few rows at the bottom of the spreadsheet to ensure that the `native-country` column has value representative of "India". In slicing the dataset, it seems I ended up without a single data point from the country
 
 ## Assignment
 
@@ -37,3 +39,5 @@ Starting from a dataset of demographic data (extracted from the 1994 Census data
 - What percentage of the people who work the minimum number of hours per week have a salary of more than 50K?
 - What country has the highest percentage of people that earn >50K and what is that percentage?
 - Identify the most popular occupation for those who earn >50K in India.
+
+## Lessons learned

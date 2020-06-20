@@ -1,3 +1,3 @@
-from analyzer_previous import calculate_demographic_data
+from analyzer import calculate_demographic_data
 
 calculate_demographic_data()
