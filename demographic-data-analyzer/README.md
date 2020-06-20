@@ -62,4 +62,46 @@ education         86
 """
 ```
 
-That being said, I reiterate the mild dissatisfaction, and urge to research the library some more.
+## Update
+
+The dissatisfaction with the solution brought a few modifications, stored in `analyzer_update.py`.
+
+Here's a few lessons learned.
+
+### loc
+
+The `loc` function allows to filter a dataframe according to a condition, and then target a specific column, in one convenient set of square brackets
+
+```py
+df[df["sex"] == "Male"]["age"]
+
+df.loc[df["sex"] == "Male", "age"]
+```
+
+### Count
+
+I've discovered at least three ways to consider how many times a certain value appears in a column
+
+1. `sum()`
+
+   ```py
+   (df["education"] == "Bachelors").sum()
+   ```
+
+   `(df["education"] == "Bachelors")` provides a series of booleans, and these are summed together considering `True` equal to `1`, `False` equal to nil, `0`
+
+2. `len()`
+
+   ```py
+   len(df[df["education"] == "Bachelors"])
+   ```
+
+   In this instance you build a dataframe with only the specific values, and then measure its length
+
+3. `shape`
+
+   ```py
+   df[df["education"] == "Bachelors"].shape[0]
+   ```
+
+   `shape` provides the dimensions for the filtered data structure, and in its first index it details the number of observations
