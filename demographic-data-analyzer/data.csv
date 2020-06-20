@@ -1,3 +1,4 @@
+age,workclass,fnlwgt,education,education-num,marital-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country,salary
 22,Private,41837,Some-college,10,Never-married,Transport-moving,Own-child,White,Male,0,0,25,United-States,<=50K
 28,Private,291374,12th,8,Never-married,Sales,Unmarried,Black,Female,0,0,40,United-States,<=50K
 47,Private,148995,Bachelors,13,Married-civ-spouse,Exec-managerial,Husband,White,Male,0,2415,60,United-States,>50K

@@ -1,9 +1,12 @@
 import pandas as pd
 
+# add path to the data.csv file
+path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
+
 
 def calculate_demographic_data(print_data=True):
     # Read data from file
-    df = pd.read_csv('data.csv')
+    df = pd.read_csv(path + "data.csv")
     # How many of each race are represented in this dataset?
     race_count = df["race"].value_counts()
 

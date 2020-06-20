@@ -10,6 +10,20 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 - there are actually two scripts. One created in the end of January 2020, one in June 2020 as I reviewed the project. The two differ since the project was updated with additional requirements, and since I've learned more about the Python language
 
+## Warning(s)
+
+1. Running the script might not work, because the `pd.read_csv` function needs to describe the location of the `csv` value.
+
+   Be sure to update the path with the precise folder.
+
+   ```py
+    path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
+   ```
+
+   This is true for both files: `analyzer` and `analyzer-previous`.
+
+2. `analyzer-previous` does not complete the assignment. It seems my inexperience with the pandas library stopped me from answering every question.
+
 ## Assignment
 
 Starting from a dataset of demographic data (extracted from the 1994 Census database), you must use Pandas to answer a series of questions.

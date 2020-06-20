@@ -1,5 +1,8 @@
 import pandas as pd
 
+# add path to the data.csv file
+path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
+
 
 def calculate_demographic_data(print_data=True):
     # Read data from file
