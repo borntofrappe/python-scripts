@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import data
-path = "ADD-PATH-HERE/python-scripts/medical-data-visualizer/data.csv"
+path = "ADD-PATH-HERE/python-scripts/medical-data-visualizer/"
 df = pd.read_csv(path + 'data.csv')
 
 # Add 'overweight' column
