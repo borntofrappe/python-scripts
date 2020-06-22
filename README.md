@@ -18,3 +18,4 @@
 | [probability-calculator](https://repl.it/@borntofrappe/fcc-probability-calculator)       | Write a program to determine the approximate probability of drawing balls at random. |                                       |
 | [numpy-stats](https://repl.it/@borntofrappe/fcc-mean-var-std)                            | Use the NumPy library to compute rudimentary statistics.                             | numpy, statistics                     |
 | [demographic-data-analyzer](https://repl.it/@borntofrappe/fcc-demographic-data-analyzer) | Analyze demographic data using Pandas                                                | pandas                                |
+| [medical-data-visualizer](https://repl.it/@borntofrappe/fcc-medical-data-visualizer)     | Visualize and make calculations from medical examination data.                       | pandas, matplotlib, seaborn           |
