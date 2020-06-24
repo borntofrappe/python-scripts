@@ -22,4 +22,4 @@ ax2.set_ylim(top=df["python"].max())
 ax2.grid(linewidth=0.5, linestyle="dotted")
 ax2.legend()
 
-fig.savefig(dir + '/object-oriented-interface.png')
+fig.savefig(dir + "/object-oriented-interface.png")
