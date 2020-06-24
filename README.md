@@ -10,7 +10,6 @@
 | [snake](https://repl.it/@borntofrappe/snake)                                             | Create a game of snake with pygame                                                   | pygame, class                         |
 | [connect-four](https://repl.it/@borntofrappe/connect-four)                               | Match cells of the same color in the terminal console                                | list comprehension, try except else   |
 | connect-four-visuals                                                                     | Match shapes of the same color                                                       | pygame, tuple                         |
-| line-chart                                                                               | Plot data from Google Trends and using matplotlib                                    | matplotlib, pandas                    |
 | [arithmetic-formatter](https://repl.it/@borntofrappe/fcc-arithmetic-arranger)            | Format arithmetic operations in rows and columns                                     | dictionary, list, string manipulation |
 | [time-calculator](https://repl.it/@borntofrappe/fcc-time-calculator)                     | Add a duration to a start time                                                       | integer division, string manipulation |
 | [shape-calculator](https://repl.it/@borntofrappe/fcc-shape-calculator)                   | Practice with object oriented programming                                            | class, object                         |
@@ -19,3 +18,4 @@
 | [numpy-stats](https://repl.it/@borntofrappe/fcc-mean-var-std)                            | Use the NumPy library to compute rudimentary statistics.                             | numpy, statistics                     |
 | [demographic-data-analyzer](https://repl.it/@borntofrappe/fcc-demographic-data-analyzer) | Analyze demographic data using Pandas                                                | pandas                                |
 | [medical-data-visualizer](https://repl.it/@borntofrappe/fcc-medical-data-visualizer)     | Visualize and make calculations from medical examination data.                       | pandas, matplotlib, seaborn           |
+| matplotlib-line                                                                          | Plot data from Google Trends with a line chart and matplotlib                        | matplotlib, pandas                    |
