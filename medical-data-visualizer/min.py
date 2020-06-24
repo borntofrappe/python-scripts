@@ -1,7 +1,10 @@
 import pandas as pd
+import os
 
-path = "ADD-PATH-HERE/python-scripts/medical-data-visualizer/"
-df = pd.read_csv(path + 'data.csv')
+dir = os.path.dirname(os.path.realpath(__file__))
+
+
+df = pd.read_csv(dir + '/data.csv')
 
 df["overweight"] = (df["weight"] / ((df["height"] / 100) ** 2) > 25)
 

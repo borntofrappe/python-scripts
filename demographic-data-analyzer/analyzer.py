@@ -1,11 +1,12 @@
 import pandas as pd
+import os
 
-path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
+dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def calculate_demographic_data(print_data=True):
     # Read data from file
-    df = pd.read_csv(path + "data.csv")
+    df = pd.read_csv(dir + "/data.csv")
 
     # How many of each race are represented in this dataset? This should be a Pandas series with race names as the index labels.
     # ! return a series

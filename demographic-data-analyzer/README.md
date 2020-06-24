@@ -12,17 +12,9 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 ## Warning(s)
 
-1. Unlike the other scripts in this repo, running the code in `main.py` will not work. To have the script work as intended, open the `analyzer` script(s) and update the `path` variable so that pandas is able to find the `.csv` file.
+1. `analyzer-previous.py` **does not** complete the assignment. It seems my January-self fell short of answering the last question
 
-   ```py
-   path = "ADD-PATH/python-scripts/demographic-data-analyzer/"
-   ```
-
-   This is true for both files: `analyzer` and `analyzer-previous`.
-
-2. `analyzer-previous.py` **does not** complete the assignment. It seems my January-self fell short of answering the last question
-
-3. the `.csv` file does not describe the full dataset as provided by the assignment. I made the decision to consider a subset, to just illustrate the point of the scripts.
+2. the `.csv` file does not describe the full dataset as provided by the assignment. I made the decision to consider a subset, to just illustrate the point of the scripts.
 
 ## Assignment
 

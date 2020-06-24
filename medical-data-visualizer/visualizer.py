@@ -2,10 +2,12 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-# Import data
-path = "ADD-PATH-HERE/python-scripts/medical-data-visualizer/"
-df = pd.read_csv(path + 'data.csv')
+dir = os.path.dirname(os.path.realpath(__file__))
+
+
+df = pd.read_csv(dir + '/data.csv')
 
 # Add 'overweight' column
 df['overweight'] = None
