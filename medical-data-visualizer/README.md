@@ -8,69 +8,104 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 - a link to the assignment will be included when the certification will be live
 
-Similarly to the project **demographic-data-analyzer**, there is a `.csv` file describing the data, and this stores a subset of the original source data. Be sure to reference the path toward the file at the top of the script.
-
-Unlike the same project, and the other in the freeCodeCamp series, there is only one solution for this assignment. I have not tackled this project in a previous version.
+Just like with the project **demographic-data-analyzer**, there is a `.csv` file describing the data, and this stores a subset of the original source data.
 
 ## Assignment
 
-The project asks to create a data visualization to highlight the medical data found in `data.csv`. In details, it asks to go through the following tasks:
+The project asks to create a data visualization to highlight the medical data found in `data.csv`. In details, it asks to go through a series of steps, which I'll describe alongside the necessary code.
 
-- add an 'overweight' column on the basis of the BMI index. The BMI index can be computed as: `BMI = weight / (height ** 2)`, considering the wright in kilograms, the height in meters. If the index is greater than `25` then the person is overweight. Add a value of `0` for **NOT** overweight and a value `1` for overweight
+### Overweight column
 
-- normalize the columns to repeat the same convention of `0` being always good, and `1` always bad. For instance, and for the `cholesterol` column, consider a value of `1` as good, and a value greater than `1` as bad. Similarly for the `gluc` column.
+> Add an 'overweight' column, where an overweight person is described with a value of `1`, and an otherwise not overweight person with a value of `0`.
 
-- convert the data into long format
+Being overweight is determined by the weight and height of each person, and particularly by the relationship `weight / (height ^ 2)`. This value is the Body Mass Index (BMI), and highlights an overweight character with a measurement greater than `25`.
 
-- create a chart that shows the value counts of the categorical features using seaborn's `catplot()`. The dataset should be split by 'Cardio' so there is one chart for each 'cardio' value (`0` and `1`)
+It is important to stress the unit of measure of this value: `kg/m^2`. This means the weight must be in kilograms, the height in meters. The `weight` column already describes the weight in kilograms, but the `height` column provides the height in centimeters.
 
-- clean the data. Filter out the following patient segments, as they represent incorrect data:
-
-  - diastolic pressure is higher then systolic (Keep the correct data with `df['ap_lo'] <= df['ap_hi'])`)
-  - height is less than the 2.5th percentile (Keep the correct data with `(df['height'] >= df['height'].quantile(0.025))`)
-  - height is more than the 97.5th percentile
-  - weight is less then the 2.5th percentile
-  - weight is more than the 97.5th percentile
-
-- create a correlation matrix using the dataset. Plot the correlation matrix using seaborn's `heatmap()`. Mask the upper triangle.
-
-## Notes
-
-> due to personal inexperience with the imported libraries, there might be more notes than usual
->
-> there is also a `min.py` script where I experiment with the modules on smaller tasks
-
-### overweight column
-
-The height is in centimeters, so be sure to divide the values to have meters instead.
+The step asks to assign values of `1` and `0`, but personally, I found it easier to use the weight and height column to assign a boolean.
 
 ```py
 df["overweight"] = df["weight"] / ((df["height"] / 100) ** 2) > 25
 ```
 
-With this snippet, the column is populated with `False` and `True` booleans, but this can be fixed when normalizing the data.
+Here the overweight column is created and populated with `True` or `False` values, describing whether a person is overweight or not.
 
-### normalize data
-
-The idea is to have `0` as good, `1` as bad.
+With a boolean, I can then update the values with the `.replace` function.
 
 ```py
 df["overweight"].replace({False: 0, True: 1})
 ```
 
-This does **NOT** mutate the original data frame. Actually, it doesn't mutate the original column, but returns a new columns with the desired values. To have the dataframe instead:
+Paying attention that this does not modify the original data structure, but returns a new data frame.
 
-```py
-df_normal = df.replace({False: 0, True: 1})
-```
+### Normalized data
 
-Every boolean is updated. This makes it easier to normalize the `cholesterol` and `gluc` functions as well. Populate the columns with a boolean, and then replace said boolean for every column.
+> normalize the columns to repeat the same convention introduced with the overweight column. In this light, a value `0` has a positive connotation, while a value of `1` casts a negative shade.
+
+The project details the `cholesterol` and `gluc` columns. These have multiple values, but the idea is to normalize these values with `1`s and `0`s.
+
+| Value | Connotation | Normalized |
+| ----- | ----------- | ---------- |
+| =1    | Good        | 0          |
+| >1    | Bad         | 1          |
+
+This is where the previous step of assigning a boolean comes in handy. The idea is to reassign the two columns with `True` and `False` values.
 
 ```py
 df["cholesterol"] = df["cholesterol"] > 1
 df["gluc"] = df["gluc"] > 1
-
-df_normal = df.replace({False: 0, True: 1})
 ```
 
-### long format
+And then apply the `replace` function not on the `overweight` column only, but on the entire dataframe.
+
+```py
+df.replace({False: 0, True: 1})
+```
+
+### Incorrect data
+
+The project asks to filter out the measurement matching the following conditions
+
+- the `ap_lo` column has a value greater than the `ap_hi` column
+- the `height` column is below the 2.5th percentile, or greater than the 97.5th one
+- the `width` column is below the 2.5th percentile, or greater than the 97.5th one
+
+While the first condition is based on a comparison of the two columns, the second and the third require you to compute the necessary percentiles.
+
+```py
+height_low_percentile = df_normal["height"].quantile(0.025)
+height_high_percentile = df_normal["height"].quantile(0.975)
+
+weight_low_percentile = df_normal["weight"].quantile(0.025)
+weight_high_percentile = df_normal["weight"].quantile(0.975)
+```
+
+To consider only those observations matching the requirements above, I considered a dataframe matching the listed conditions
+
+```py
+df_normal[(df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_percentile) | (df["height"] > height_high_percentile) | (
+    df["weight"] < weight_low_percentile) | (df["weight"] > weight_high_percentile)]
+```
+
+And then used the `~` tilde character on the entire set.
+
+```py
+df_clean = df_normal[~((df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_percentile) | (df["height"] > height_high_percentile) | (
+    df["weight"] < weight_low_percentile) | (df["weight"] > weight_high_percentile))]
+```
+
+### Long format
+
+> convert the data into long format
+
+???
+
+### Bar chart
+
+> create a chart that shows the value counts of the categorical features using seaborn's `catplot()`.
+
+In more details, the data should be split by 'cardio', so that there is one chart for each value (`0` and `1`).
+
+### Correlation matrix
+
+Plot the correlation matrix using seaborn's `heatmap()`. Mask the upper triangle.

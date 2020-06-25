@@ -2,8 +2,6 @@ import pandas as pd
 import os
 
 dir = os.path.dirname(os.path.realpath(__file__))
-
-
 df = pd.read_csv(dir + '/data.csv')
 
 df["overweight"] = (df["weight"] / ((df["height"] / 100) ** 2) > 25)
@@ -13,4 +11,13 @@ df["gluc"] = df["gluc"] > 1
 
 df_normal = df.replace({False: 0, True: 1})
 
-print(df_normal.head())
+height_low_percentile = df_normal["height"].quantile(0.025)
+height_high_percentile = df_normal["height"].quantile(0.975)
+
+weight_low_percentile = df_normal["weight"].quantile(0.025)
+weight_high_percentile = df_normal["weight"].quantile(0.975)
+
+df_clean = df_normal[~((df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_percentile) | (df["height"] > height_high_percentile) | (
+    df["weight"] < weight_low_percentile) | (df["weight"] > weight_high_percentile))]
+
+print(len(df_clean))
