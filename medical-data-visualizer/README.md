@@ -98,14 +98,65 @@ df_clean = df_normal[~((df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_
 
 > convert the data into long format
 
-???
+Researching the seaborn library, I've come to understand long format as having one observation for each desired variable. In other words, instead of having the data structured as in the following short (wide format):
+
+```code
+cholesterol  gluc  smoke  alco  active  cardio  overweight
+0            0     0      0     1       0       0
+1            0     0      0     1       1       1
+1            0     0      0     0       1       0
+...
+```
+
+You repeat the values for each individual column
+
+```code
+variable value
+```
+
+For instance, and for a few observations:
+
+```code
+variable value
+cholesterol 0
+cholesterol 1
+cholesterol 1
+gluc 0
+gluc 0
+gluc 0
+...
+```
+
+Understanding the long format, the operation is achieved with the `melt` function. Provided by the `pandas` library, is specifies the columns which need to be "elongated" in the `value_vars` argument.
+
+```py
+df_long = pd.melt(df_clean, value_vars=[
+                  "active", "alco", "cholesterol", "gluc", "overweight", "smoke"])
+```
+
+Since the observations need to be differentiated on the basis of the `cardio` property, it is also necessary to consider the matching column; this is achieved with the `id_vars` argument.
+
+```py
+pd.melt(df_clean, id_vars="cardio", value_vars=[...])
+```
 
 ### Bar chart
 
 > create a chart that shows the value counts of the categorical features using seaborn's `catplot()`.
 
-In more details, the data should be split by 'cardio', so that there is one chart for each value (`0` and `1`).
+In more details, the data should be split by 'cardio', so that there is one chart for each value (`0` and `1`). Moreover, the bar plot should consider the value counts for the following columns:
+
+- active
+- alco
+- cholesterol
+- gluc
+- overweight
+- smoke
 
 ### Correlation matrix
 
 Plot the correlation matrix using seaborn's `heatmap()`. Mask the upper triangle.
+
+```
+
+```

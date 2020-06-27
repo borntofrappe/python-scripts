@@ -20,4 +20,6 @@ weight_high_percentile = df_normal["weight"].quantile(0.975)
 df_clean = df_normal[~((df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_percentile) | (df["height"] > height_high_percentile) | (
     df["weight"] < weight_low_percentile) | (df["weight"] > weight_high_percentile))]
 
-print(len(df_clean))
+df_long = pd.melt(df_clean, id_vars="cardio", value_vars=[
+                  "active", "alco", "cholesterol", "gluc", "overweight", "smoke"])
+print(df_long.head())
