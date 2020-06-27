@@ -1,4 +1,4 @@
-# Medical Data Visualizer
+# [Medical Data Visualizer](https://repl.it/@borntofrappe/fcc-medical-data-visualizer)
 
 > Third project of five to earn the **Data Analysis with Python** certification on freeCodeCamp.
 
@@ -18,7 +18,7 @@ I've added two more files than actually necessary:
 
 ## Assignment
 
-The project asks to create a data visualization to highlight the medical data found in `data.csv`. In details, it asks to go through a series of steps, which I'll describe alongside the necessary code.
+The project asks to create data visualizations to highlight the medical data found in `data.csv`. In details, it asks to go through a series of steps, which I'll describe alongside the necessary code.
 
 ### Overweight column
 
@@ -223,9 +223,26 @@ mask = np.triu(corr.columns)
 
 The strings are truthy values, and hide the top right section of the matrix.
 
-To be more precise, you could actually build an array of booleans. For instance replacing the strings with `True` and `0` with `False`. Or the opposite if you were to use `tril` instead.
-
 ```py
-mask[mask != 0] = True
-mask[mask == 0] = False
+sns.heatmap(data=corr, mask=mask)
 ```
+
+And that wraps up the code to complete the assignment. Ultimately, the `heatmap` function includes additional keyword arguments, but these instructions are purely aesthetic:
+
+- add the correlation value in the individual cells: `annot=True, fmt='.1f'
+- resize each cell to be a square: `square=True`
+- resize the legend to occupy a fraction of the original dimension (by default it matches the height of the matrix): `cbar_kws={'shrink': 0.5}`
+
+### Docs
+
+The following pages helped a lot:
+
+- [pandas melt](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.melt.html)
+
+- [seaborn catplot](https://seaborn.pydata.org/generated/seaborn.catplot.html)
+
+- [seaborn heatmap](https://seaborn.pydata.org/generated/seaborn.heatmap.html)
+
+- [numpy triu](https://numpy.org/doc/stable/reference/generated/numpy.triu.html)
+
+- [matplotlib colorbar](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.colorbar.html)
