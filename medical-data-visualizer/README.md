@@ -10,6 +10,8 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 Just like with the project **demographic-data-analyzer**, there is a `.csv` file describing the data, and this stores a subset of the original source data.
 
+_Small note_: I've added a `min.py` file to experiment freely with the pandas and seaborn libraries. `main.py` is ultimately the source of truth. It is structured to comply with freeCodeCamp testing suite, and ultimately it describes the code submitted to the platform.
+
 ## Assignment
 
 The project asks to create a data visualization to highlight the medical data found in `data.csv`. In details, it asks to go through a series of steps, which I'll describe alongside the necessary code.
@@ -62,9 +64,68 @@ And then apply the `replace` function not on the `overweight` column only, but o
 df.replace({False: 0, True: 1})
 ```
 
+### Long format
+
+> convert the data into long format
+
+Researching the seaborn library, I've come to understand long format as having one observation for each desired variable. In other words, instead of having the data structured as in the following short (wide format):
+
+```code
+cholesterol  gluc  smoke  alco  active  cardio  overweight
+0            0     0      0     1       0       0
+1            0     0      0     1       1       1
+1            0     0      0     0       1       0
+...
+```
+
+You repeat the values for each individual column (hence the long format)
+
+```code
+variable value
+```
+
+For instance, and for a few observations:
+
+```code
+variable value
+cholesterol 0
+cholesterol 1
+cholesterol 1
+gluc 0
+gluc 0
+gluc 0
+...
+```
+
+Understanding the long format, the operation is achieved with the `melt` function. Provided by the `pandas` library, is specifies the columns which need to be "elongated" in the `value_vars` argument.
+
+```py
+df_long = pd.melt(df_normal, value_vars=[
+                  "active", "alco", "cholesterol", "gluc", "overweight", "smoke"])
+```
+
+Since the observations need to be differentiated on the basis of the `cardio` property, it is also necessary to consider the matching column; this is achieved with the `id_vars` argument.
+
+```py
+pd.melt(df_normal, id_vars="cardio", value_vars=[...])
+```
+
+### Bar chart
+
+> create a chart that shows the value counts of the categorical features using seaborn's `catplot()`.
+
+In more details, the data should be split by 'cardio', so that there is one chart for each value (`0` and `1`). Moreover, the bar plot should consider the value counts for the following columns:
+
+- active
+- alco
+- cholesterol
+- gluc
+- overweight
+- smoke
+
 ### Incorrect data
 
-The project asks to filter out the measurement matching the following conditions
+For the correlation matrix, the project asks to filter out the measurement matching the following conditions
 
 - the `ap_lo` column has a value greater than the `ap_hi` column
 - the `height` column is below the 2.5th percentile, or greater than the 97.5th one
@@ -93,65 +154,6 @@ And then used the `~` tilde character on the entire set.
 df_clean = df_normal[~((df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_percentile) | (df["height"] > height_high_percentile) | (
     df["weight"] < weight_low_percentile) | (df["weight"] > weight_high_percentile))]
 ```
-
-### Long format
-
-> convert the data into long format
-
-Researching the seaborn library, I've come to understand long format as having one observation for each desired variable. In other words, instead of having the data structured as in the following short (wide format):
-
-```code
-cholesterol  gluc  smoke  alco  active  cardio  overweight
-0            0     0      0     1       0       0
-1            0     0      0     1       1       1
-1            0     0      0     0       1       0
-...
-```
-
-You repeat the values for each individual column
-
-```code
-variable value
-```
-
-For instance, and for a few observations:
-
-```code
-variable value
-cholesterol 0
-cholesterol 1
-cholesterol 1
-gluc 0
-gluc 0
-gluc 0
-...
-```
-
-Understanding the long format, the operation is achieved with the `melt` function. Provided by the `pandas` library, is specifies the columns which need to be "elongated" in the `value_vars` argument.
-
-```py
-df_long = pd.melt(df_clean, value_vars=[
-                  "active", "alco", "cholesterol", "gluc", "overweight", "smoke"])
-```
-
-Since the observations need to be differentiated on the basis of the `cardio` property, it is also necessary to consider the matching column; this is achieved with the `id_vars` argument.
-
-```py
-pd.melt(df_clean, id_vars="cardio", value_vars=[...])
-```
-
-### Bar chart
-
-> create a chart that shows the value counts of the categorical features using seaborn's `catplot()`.
-
-In more details, the data should be split by 'cardio', so that there is one chart for each value (`0` and `1`). Moreover, the bar plot should consider the value counts for the following columns:
-
-- active
-- alco
-- cholesterol
-- gluc
-- overweight
-- smoke
 
 ### Correlation matrix
 
