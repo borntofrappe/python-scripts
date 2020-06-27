@@ -22,20 +22,17 @@ df_normal = df.replace({False: 0, True: 1})
 
 
 def draw_cat_plot():
-    # Create DataFrame for cat plot using `pd.melt` using just the values from 'cholesterol', 'gluc', 'smoke', 'alco', 'active', and 'overweight'.
-    df_cat = pd.melt(df_normal, value_vars=[
-                  "active", "alco", "cholesterol", "gluc", "overweight", "smoke"])
+    df_cat = pd.melt(df_normal, id_vars="cardio", value_vars=[
+        "active", "alco", "cholesterol", "gluc", "overweight", "smoke"])
 
-    # Group and reformat the data to split it by 'cardio'. Show the counts of each feature. You will have to rename one of the collumns for the catplot to work correctly.
-    df_cat = None
+    fig = sns.catplot(x="variable", hue="value", col="cardio",
+                      kind="count", data=df_cat)
 
-    # Draw the catplot with 'sns.catplot()'
-
-    # Do not modify the next two lines
-    fig.savefig('catplot.png')
+    fig.savefig(dir + "/catplot.png")
     return fig
 
 
+"""
 # Draw Heat Map
 def draw_heat_map():
     height_low_percentile = df_normal["height"].quantile(0.025)
@@ -61,3 +58,4 @@ def draw_heat_map():
     # Do not modify the next two lines
     fig.savefig('heatmap.png')
     return fig
+"""

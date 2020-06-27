@@ -10,7 +10,11 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 Just like with the project **demographic-data-analyzer**, there is a `.csv` file describing the data, and this stores a subset of the original source data.
 
-_Small note_: I've added a `min.py` file to experiment freely with the pandas and seaborn libraries. `main.py` is ultimately the source of truth. It is structured to comply with freeCodeCamp testing suite, and ultimately it describes the code submitted to the platform.
+I've added two more files than actually necessary:
+
+- `min.py`. `main.py` is structured to comply with freeCodeCamp testing suite, but it allows for less experimentation. With `min.py` I tried my luck with the pandas and seaborn library without considering the initial requirements.
+
+- `.gitignore`. This additional gitignore file is added to disregard the `.png` images produced by the script. I feel the output is less important than the script producing it, and the images would pollute the repository.
 
 ## Assignment
 
@@ -114,7 +118,9 @@ pd.melt(df_normal, id_vars="cardio", value_vars=[...])
 
 > create a chart that shows the value counts of the categorical features using seaborn's `catplot()`.
 
-In more details, the data should be split by 'cardio', so that there is one chart for each value (`0` and `1`). Moreover, the bar plot should consider the value counts for the following columns:
+In more details, the project asks to split the data according to the values in the 'cardio' column (`0`s and `1`s here as well). The idea is to have two adjacent bar charts, one for each value.
+
+Split by cardio, you should highlight the count, the number of observation for the following columns:
 
 - active
 - alco
@@ -122,6 +128,23 @@ In more details, the data should be split by 'cardio', so that there is one char
 - gluc
 - overweight
 - smoke
+
+This is achieved with the seaborn library and the `catplot` function, specifying a kind argument of `kind=count`. The idea being that seaborn creates a _countplot_.
+
+With the data in the long format, the function is surprisingly readable.
+
+```py
+sns.catplot(x="variable", hue="value", col="cardio", kind="count", data=df_long)
+```
+
+`variable` refers to each variable described in the "elongated" format: active, alco and so forth. `value` distinguishes between the variables' own values (`0`s and `1`s). `col` allows to create the two _facets_ of the bar chart.
+
+In a jupyter notebook it is enough to run the function, but to save the function locally you can store the catplot in a variable, and use the `savefig` function specifying the output path.
+
+```py
+fig = sns.catplot(...)
+fig.savefig("/catplot.png")
+```
 
 ### Incorrect data
 
@@ -157,7 +180,7 @@ df_clean = df_normal[~((df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_
 
 ### Correlation matrix
 
-Plot the correlation matrix using seaborn's `heatmap()`. Mask the upper triangle.
+> Plot the correlation matrix using seaborn's `heatmap()`. Mask the upper triangle.
 
 ```
 
