@@ -182,6 +182,50 @@ df_clean = df_normal[~((df["ap_lo"] > df["ap_hi"]) | (df["height"] < height_low_
 
 > Plot the correlation matrix using seaborn's `heatmap()`. Mask the upper triangle.
 
+This required a bit of reseach not only for seaborn, but pandas as well.
+
+It is first necessary to plot a correlation matrix. This is done through pandas, and a function made available on every dataframe.
+
+```py
+corr = df_heat.corr()
 ```
 
+This is already enough to plot the heatmap, and with default values.
+
+```py
+sns.heatmap(data=corr)
+```
+
+However, and for the project, it is necessary to mask the upper right section to effectively show a triangle.
+
+The mask works as follows: a 2d array, matching the shape of the correlation matrix, which is interpreted with `True` and `False` values. For every `True` value, then, the heatmap hides the corresponding square.
+
+To build the mask, it is possible to use the array of values behind `corr.columns` alongside the `triu` function provided by `numpy`.
+
+```py
+np.triu(corr.columns)
+```
+
+For the `tril` and `triu` functions, numpy builds the desired 2d array, and places `0` past/before the diagonal.
+
+Effectively, it is already possible to use this 2d array filled with strings and `0`s.
+
+```py
+mask = np.triu(corr.columns)
+
+"""
+[['id' 'age' 'gender' ...]
+ [0 'age' 'gender' ...]
+ [0 0 'gender' ...]
+]
+"""
+```
+
+The strings are truthy values, and hide the top right section of the matrix.
+
+To be more precise, you could actually build an array of booleans. For instance replacing the strings with `True` and `0` with `False`. Or the opposite if you were to use `tril` instead.
+
+```py
+mask[mask != 0] = True
+mask[mask == 0] = False
 ```
