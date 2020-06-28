@@ -292,6 +292,27 @@ The same would be true for `c.axes[0][1]`.
 
 The project is still being developed, so I it is likely that the issue is with the testing suite itself.
 
+### Groupby
+
+I've added `visualizer_update.py` to comply with one step I honestly snubbed when creating the catplot:
+
+> Group and reformat the data to split it by 'cardio'. Show the counts of each feature. You will have to rename one of the collumns for the catplot to work correctly.
+
+The script creates a dataframe in a rather convoluted manner, but the goal is to create a data structure similar to the following.
+
+```code
+  variable  value  cardio  total
+0   active      0       0    106
+1   active      0       1    116
+2   active      1       0    387
+3   active      1       1    391
+...
+```
+
+Once there is a column already counting the number of the `0`s and `1`s, it is no longer to use a countplot, or `kind=count`, and the script uses the default visualization (`kind=bar`).
+
+It does **not** solve the issue with the testing suite, but highlights several features of the pandas library.
+
 ### Docs
 
 The following pages helped a lot:
