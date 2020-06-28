@@ -19,3 +19,4 @@
 | [demographic-data-analyzer](https://repl.it/@borntofrappe/fcc-demographic-data-analyzer) | Analyze demographic data using Pandas                                                | pandas                                |
 | [matplotlib-line](https://repl.it/@borntofrappe/matplotlib-line)                         | Plot data from Google Trends with a line chart and matplotlib                        | matplotlib, pandas                    |
 | [medical-data-visualizer](https://repl.it/@borntofrappe/fcc-medical-data-visualizer)     | Visualize and make calculations from medical examination data.                       | pandas, matplotlib, seaborn           |
+| [time-series-visualizer](https://repl.it/@borntofrappe/fcc-time-series-visualizer)       | Visualize time series data using a line chart, bar chart, and box plots.             | numpy, pandas, matplotlib, seaborn    |
