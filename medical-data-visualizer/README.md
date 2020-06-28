@@ -233,6 +233,65 @@ And that wraps up the code to complete the assignment. Ultimately, the `heatmap`
 - resize each cell to be a square: `square=True`
 - resize the legend to occupy a fraction of the original dimension (by default it matches the height of the matrix): `cbar_kws={'shrink': 0.5}`
 
+### Debugging
+
+The testing suite fails with the following error messages:
+
+1. test_line_plot_labels: 'numpy.ndarray' object has no attribute 'get_xlabel'
+
+2. test_bar_plot_number_of_bars: 'numpy.ndarray' object has no attribute 'get_children'
+
+They are both connected to the catplot function, and looking at the testing code, they are both connected to the `ax` object. This is retrieved as `self.fig.axes[0]`, where `self` refers to the figure returned by the catplot function. In the first instance, the attribute should return the string `variable`, for the label of the x axis. In the second instance, the attribute should describe a list for the ticks of the same axis.
+
+The function effectively returns a `FacetGrid` object.
+
+```py
+c = medical_data_visualizer.draw_cat_plot()
+print(c)
+"""
+<seaborn.axisgrid.FacetGrid object at 0x0088E718>
+"""
+```
+
+Looking at the `axes` object, seaborn highlights two axes objects.
+
+```py
+print(c.axes)
+"""
+[[<matplotlib.axes._subplots.AxesSubplot object at 0x197451A8>
+  <matplotlib.axes._subplots.AxesSubplot object at 0x1B743310>]]
+"""
+```
+
+The axes are however nested two levels deep. In other words, to retrieve the x axis, its labels and ticks, you should write
+
+```py
+print(c.axes[0][0])
+"""
+AxesSubplot(0.0513472,0.116556;0.432133x0.814778)
+"""
+```
+
+It seems reasonable enough: the catplot creates two bar charts, each with its set of axes.
+
+Sure enough, considering one of the two sets:
+
+```py
+print(c.axes[0][0].get_xlabel())
+"""
+variable
+"""
+
+print(c.axes[0][0].get_children())
+"""
+[<matplotlib.patches.Rectangle object at 0x1B763E98>, <matplotlib.patches.Rectangle object at 0x1B74B280>, ...]
+"""
+```
+
+The same would be true for `c.axes[0][1]`.
+
+The project is still being developed, so I it is likely that the issue is with the testing suite itself.
+
 ### Docs
 
 The following pages helped a lot:
@@ -246,3 +305,5 @@ The following pages helped a lot:
 - [numpy triu](https://numpy.org/doc/stable/reference/generated/numpy.triu.html)
 
 - [matplotlib colorbar](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.colorbar.html)
+
+- [pandas groupby](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.groupby.html)
