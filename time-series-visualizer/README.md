@@ -10,9 +10,15 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 ## Assignment
 
-The project asks to visualize a time series with several data visualizations. It is broken down in a series of steps, which I decided to annotate with my solution.
+The project asks to visualize a time series with different data visualizations: a line chart, a bar chart and a box plot.
 
-I've included an additional script in `min.py` to ease this incremental development.
+I've included an additional script in `min.py`, to experiment with the different libraries, and potentially find alternative solutions.
+
+## Notes
+
+...
+
+<!--
 
 ### os
 
@@ -299,4 +305,4 @@ Docs and resources which aided the development of the project.
 
 - [pandas quantile](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.quantile.html)
 
-- [pandas grouper](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html)
+- [pandas grouper](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html) -->
