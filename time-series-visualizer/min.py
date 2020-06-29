@@ -26,16 +26,16 @@ fig_line.savefig(dir + '/' + './line_plot.png')
 # BAR CHART
 df_copy = df_clean.copy()
 df_group = df_copy.groupby(pd.Grouper(freq="M"))
-df_box = df_group.mean()
+df_bar = df_group.mean()
 
-df_box["month"] = df_box.index.month_name()
-df_box["year"] = df_box.index.year
+df_bar["month"] = df_bar.index.month_name()
+df_bar["year"] = df_bar.index.year
 
 """
 # alternative
-df_box = df_box.reset_index()
-df_box["month"] = df_box["date"].dt.strftime("%B")
-df_box["year"] = df_box["date"].dt.strftime("%Y")
+df_bar = df_bar.reset_index()
+df_bar["month"] = df_bar["date"].dt.strftime("%B")
+df_bar["year"] = df_bar["date"].dt.strftime("%Y")
 """
 
 months = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -46,10 +46,32 @@ fig_bar = plt.figure(figsize=(10, 8))
 
 
 ax_bar = sns.barplot(x="year", y="value", hue="month",
-                     hue_order=months, data=df_box)
+                     hue_order=months, data=df_bar)
 
 ax_bar.set(xlabel="Years", ylabel="Average Page Views")
 ax_bar.legend(title="Months", loc="upper left")
 
 
-fig_bar.savefig(dir + '/' + './bar_plot.png')
+fig_bar.savefig(dir + '/' + 'bar_plot.png')
+
+
+# BOX PLOT
+df_box = df_clean.copy()
+df_box["month"] = df_box.index.month_name()
+df_box["year"] = df_box.index.year
+
+months = ['January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December']
+
+fig_box, axs_box = plt.subplots(1, 2, figsize=(18, 6))
+ax1, ax2 = axs_box
+
+
+sns.boxplot(x="year", y="value", data=df_box, ax=ax1)
+ax1.set(title="Year-wise Box Plot (Trend)", xlabel="Year", ylabel="Page Views")
+
+sns.boxplot(x="month", y="value", order=months, data=df_box, ax=ax2)
+ax2.set(title="Month-wise Box Plot (Seasonality)",
+        xlabel="Month", ylabel="Page Views", xticklabels=[m[:3] for m in months])
+
+fig_box.savefig(dir + '/' + 'box_plot.png')

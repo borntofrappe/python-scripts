@@ -181,8 +181,8 @@ date
 `sum`, or in the instance of the project, `mean` to compute the average.
 
 ```py
-df_box = df_group.mean()
-print(df_box)
+df_bar = df_group.mean()
+print(df_bar)
 """
                     value
 date
@@ -203,9 +203,9 @@ From the grouped dataframe, you can do so using the `index`, or, alternatively, 
 Using the index, you can add the year value and the name of the month using the following syntax.
 
 ```py
-df_box["month"] = df_box.index.month_name()
-df_box["year"] = df_box.index.year
-print(df_box.head(2))
+df_bar["month"] = df_bar.index.month_name()
+df_bar["year"] = df_bar.index.year
+print(df_bar.head(2))
 """
                    value month  year
 date
@@ -219,8 +219,8 @@ date
 Without using the `index`, you can actually create a dataframe in which the date is represented in its own column.
 
 ```py
-df_box = df_box.reset_index()
-print(df_box.head(2))
+df_bar = df_bar.reset_index()
+print(df_bar.head(2))
 """
         date         value
 0 2016-05-31  19432.400000
@@ -231,8 +231,8 @@ print(df_box.head(2))
 The year and month can be then included using the `dt.strftime` construct provided by the pandas library
 
 ```py
-df_box["month"] = df_box["date"].dt.strftime("%B")
-df_box["year"] = df_box["date"].dt.strftime("%Y")
+df_bar["month"] = df_bar["date"].dt.strftime("%B")
+df_bar["year"] = df_bar["date"].dt.strftime("%Y")
 """
         date         value month  year
 0 2016-05-31  19432.400000   May  2016
@@ -261,7 +261,7 @@ fig.savefig(dir + '/' + './bar_plot.png')
 For the bar plot, specify the appearance of the plot through its several, foundational attributes:
 
 ```py
-sns.barplot(x="year", y="value", hue="month", hue_order=months, data=df_box)
+sns.barplot(x="year", y="value", hue="month", hue_order=months, data=df_bar)
 ```
 
 From the left:
@@ -287,6 +287,10 @@ ax.set(xlabel="Years", ylabel="Average Page Views")
 ax.legend(title="Months", loc="upper left")
 ```
 
+### Box plot
+
+Draw two adjacent box plots, to show how the values are distributed within a given year or month and how it compares over time. The title of the first chart should be "Year-wise Box Plot (Trend)" and the title of the second chart should be "Month-wise Box Plot (Seasonality)". Make sure the month labels on bottom start at "Jan" and the axes are labeled correctly.
+
 ## Docs
 
 Docs and resources which aided the development of the project.
@@ -296,9 +300,3 @@ Docs and resources which aided the development of the project.
 - [pandas quantile](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.quantile.html)
 
 - [pandas grouper](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html)
-
----
-
-- Create a `draw_box_plot` function that uses Searborn to draw two adjacent box plots similar to "examples/Figure_3.png". These box plots should show how the values are distributed within a given year or month and how it compares over time. The title of the first chart should be "Year-wise Box Plot (Trend)" and the title of the second chart should be "Month-wise Box Plot (Seasonality)". Make sure the month labels on bottom start at "Jan" and the x and x axis are labeled correctly.
-
-For each chart, make sure to use a copy of the data frame. Unit tests are written for you under `test_module.py`.
