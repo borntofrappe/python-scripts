@@ -76,6 +76,38 @@ print(len(df)) # 1304
 print(len(df_clean)) # 1238
 ```
 
+### Line plot
+
+Complete the `draw_line_plot` function to map the values with a line chart. The title should be "Daily freeCodeCamp Forum Page Views 5/2016-12/2019". The label on the x axis should be "Date" and the label on the y axis should be "Page Views".
+
+seaborn provides the `lineplot` function, which handily plots the time series by specifying the `x` and `y` keyword arguments.
+
+Start by setting up a figure with matplotlib
+
+```py
+fig = plt.figure(figsize=(16, 5))
+```
+
+Plot the data with seaborn, and keep a reference to the ax in which the visualization is created
+
+```py
+ax = sns.lineplot(x=df_clean.index, y=df_clean["value"])
+```
+
+In this manner, you can update the title and axes' labels with the `.set()` function. Individually:
+
+```py
+ax.set_title("Daily freeCodeCamp Forum Page Views 5/2016-12/2019")
+ax.set_xlabel("Date")
+ax.set_ylabel("Page Views")
+```
+
+Or with a single `.set` describing the values through keyword arguments.
+
+```py
+ax.set(title="Daily freeCodeCamp Forum Page Views 5/2016-12/2019", xlabel="Date", ylabel="Page Views")
+```
+
 ## Docs
 
 Docs and resources which aided the development of the project.
@@ -86,7 +118,6 @@ Docs and resources which aided the development of the project.
 
 ---
 
-- Create a `draw_line_plot` function that uses Matplotlib to draw a line chart similar to "examples/Figure_1.png". The title should be "Daily freeCodeCamp Forum Page Views 5/2016-12/2019". The label on the x axis should be "Date" and the label on the y axis should be "Page Views".
 - Create a `draw_bar_plot` function that draws a bar chart similar to "examples/Figure_2.png". It should show average daily page views for each month grouped by year. The legend should show month labels and have a title of "Months". On the chart, the label on the x axis should be "Years" and the label on the y axis should be "Average Page Views".
 - Create a `draw_box_plot` function that uses Searborn to draw two adjacent box plots similar to "examples/Figure_3.png". These box plots should show how the values are distributed within a given year or month and how it compares over time. The title of the first chart should be "Year-wise Box Plot (Trend)" and the title of the second chart should be "Month-wise Box Plot (Seasonality)". Make sure the month labels on bottom start at "Jan" and the x and x axis are labeled correctly.
 
