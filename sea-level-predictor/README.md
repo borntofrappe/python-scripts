@@ -1,4 +1,4 @@
-# Sea level predictor
+# [Sea level predictor](https://repl.it/@borntofrappe/fcc-sea-level-predictor)
 
 > Fifth project of five to earn the **Data Analysis with Python** certification on freeCodeCamp.
 
@@ -155,11 +155,23 @@ x1 = df["Year"][0]
 Works only because the data point at the `0`th index happens to be the first value. In the modified dataframe. however, there is no `0`th index. To pick the first item based on position and not index, use the `iloc()` function.
 
 ```py
+x1 = df.iloc[0]["Year"]
+```
+
+There's a minor issue in that the value is returned as a float, but to fix this, wrap the result in the `int` function.
+
+```py
 x1 = int(df.iloc[0]["Year"])
+```
+
+It doesn't change the way the line(s) are plotted, but in the moment the years are included in the legend (as they are), it makes a difference.
+
+```py
+label="Line of best fit " + str(x1) + "-" + str(x2)
 ```
 
 With this in mind, the new line of best fit repeats the exact same computations and the exact same function to plot the line. The only difference relates to the color, to differentiate the two.
 
-##### Reference
+#### Reference
 
 - [pandas iloc](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.iloc.html)
