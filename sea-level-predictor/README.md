@@ -26,21 +26,74 @@ This using the following libraries:
 
 `min.py` is a file I personally added to explore the libraries and build the project in increments.
 
-<!-- ## Notes
+## Notes
 
-A few things I've learned developing the script. -->
+A few things I've learned developing the script.
+
+### Import data
+
+Similarly to the other projects for the same certification, use pandas and the `read_csv` function to create a dataframe from `data.csv`. Take advantage of the `os` module to describe the path to the data file.
+
+```py
+import pandas as pd
+import os
+
+dir = os.path.dirname(__file__)
+
+df = pd.read_csv(dir + '/data.csv')
+print(df.head())
+"""
+   Year  CSIRO Adjusted Sea Level  Lower Error Bound  Upper Error Bound  NOAA Adjusted Sea Level
+0  1880                  0.000000          -0.952756           0.952756                      NaN
+1  1881                  0.220472          -0.732283           1.173228                      NaN
+2  1882                 -0.440945          -1.346457           0.464567                      NaN
+3  1883                 -0.232283          -1.129921           0.665354                      NaN
+4  1884                  0.590551          -0.283465           1.464567                      NaN
+"""
+```
+
+It's interesting to see how the last column has `NaN` values. Looking at the length of the dataframe vis-a-vis the number of `NaN` values, it seems that `NaN` values represent the majority of the column.
+
+```py
+print(len(df)) # 134
+print(df["NOAA Adjusted Sea Level"].isna().sum()) # 113
+```
+
+### Scatter plot
+
+The idea is to use matplotlib to map the data according to the `year` and `CSIRO Adjusted Sea Level` columns.
+
+Looking at the starter code from `predictor.py`, it seems the script asks to use the library through its global interface.
+
+```py
+import matplotlib.pyplot as plt
+
+plt.savefig('sea_level_plot.png')
+```
+
+In other words, you use the `plt` object to create the data visualizations, and modify the global object instead of creating separate interfaces.
+
+For the data visualization, `scatter` accepts as argument the dimensions of the scatter plot:
+
+```py
+plt.scatter(df["Year"], df["CSIRO Adjusted Sea Level"])
+```
+
+I've added labels and a title, but this is not necessary to complete the project.
+
+```py
+plt.title("Sea Level Rise")
+plt.xlabel("Year")
+plt.ylabel("Adjusted Sea Level")
+```
+
+#### Resources
+
+- [matplotlib on the `.scatter` function](https://matplotlib.org/api/_as_gen/matplotlib.pyplot.scatter.html)
 
 ---
 
 <!--
-
-### Assignment
-
-You will anaylize a dataset of the global average sea level change since 1880. You will use the data to predict the sea level change through year 2050.
-
-Use the data to complete the following tasks:
-* Use Pandas to import the data from `epa-sea-level.csv`.
-* Use matplotlib to create a scatter plot using the "Year" column as the x-axis and the "CSIRO Adjusted Sea Level" column as the y-axix.
 * Use the `linregress` function from `scipi.stats` to get the slope and y-intercept of the line of best fit. Plot the line of best fit over the top of the scatter plot. Make the line go through the year 2050 to predict the sea level rise in 2050.
 * Plot a new line of best fit just using the data from year 2000 through the most recent year in the dataset. Make the line also go through the year 2050 to predict the sea level rise in 2050 if the rate of rise continues as it has since the year 2000.
 * The x label should be "Year", the y label should be "Sea Level (inches)", and the title should be "Rise in Sea Level".
