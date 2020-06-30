@@ -109,24 +109,24 @@ With this information, the assignment is to then plot the line on top of the sca
 slope, intercept, rvalue, pvalue, stderr = linregress(
     df["Year"], df["CSIRO Adjusted Sea Level"])
 
-x0 = df["Year"][0]
-x1 = 2050
-y0 = intercept + x0 * slope
-y1 = intercept + x1 * slope
+x1 = df["Year"][0]
+x2 = 2050
+y1 = intercept + x0 * slope
+y2 = intercept + x1 * slope
 
-plt.plot([x0, x1], [y0, y1])
+plt.plot([x1, x2], [y1, y2])
 ```
 
 The line shares the same color of the scatter plot, but with a few more arguments it is made more evident.
 
 ```py
-plt.plot([x0, x1], [y0, y1], linewidth=2, color="red")
+plt.plot([x1, x2], [y1, y2], linewidth=2, color="red")
 ```
 
 It is also not required by the assignment, but I've added a legend with a label describing the purpose of the line.
 
 ```py
-plt.plot([x0, x1], [y0, y1], linewidth=2, color="red", label="Line of best fit")
+plt.plot([x1, x2], [y1, y2], linewidth=2, color="red", label="Line of best fit")
 plt.legend()
 ```
 
@@ -138,27 +138,28 @@ plt.legend()
 
 - [matplotlib on line charts with `plot`](https://matplotlib.org/3.1.0/api/_as_gen/matplotlib.pyplot.plot.html)
 
-<!--
-*
-* Plot a new line of best fit just using the data from year 2000 through the most recent year in the dataset. Make the line also go through the year 2050 to predict the sea level rise in 2050 if the rate of rise continues as it has since the year 2000.
-* The x label should be "Year", the y label should be "Sea Level (inches)", and the title should be "Rise in Sea Level".
+### Line of best fit/2
 
-Unit tests are written for you under `test_module.py`.
+The final request of the assignment is to plot yet another line of best fit, considering a subset of the original data, and more specifically starting with the year 2000.
 
-### Development
+```py
+df_recent = df[df["Year"] >= 2000]
+```
 
-For development, you can use `main.py` to test your functions. Click the "run" button and `main.py` will run.
+With the new column, it is a matter of repeating the computations used for the first line chart. However, one modification is with the way `x1` is computed. It is actually valid for the first line as well: using the previous syntax
 
-### Testing
+```py
+x1 = df["Year"][0]
+```
 
-We imported the tests from `test_module.py` to `main.py` for your convenience. The tests will run automatically whenever you hit the "run" button.
+Works only because the data point at the `0`th index happens to be the first value. In the modified dataframe. however, there is no `0`th index. To pick the first item based on position and not index, use the `iloc()` function.
 
-### Submitting
+```py
+x1 = int(df.iloc[0]["Year"])
+```
 
-Copy your project's URL and submit it to freeCodeCamp.
+With this in mind, the new line of best fit repeats the exact same computations and the exact same function to plot the line. The only difference relates to the color, to differentiate the two.
 
-### Data Source
-Global Average Absolute Sea Level Change, 1880-2014 from the US Environmental Protection Agency using data from CSIRO, 2015; NOAA, 2015.
-https://datahub.io/core/sea-level-rise
+##### Reference
 
--->
+- [pandas iloc](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.iloc.html)
