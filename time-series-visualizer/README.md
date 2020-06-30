@@ -157,6 +157,8 @@ date
 
 ### Clean data
 
+> quantile
+
 The projects asks to remove the values exceeding a given range: below the 2.5th, and above the 97.5th percentile.
 
 The `quantile` function determines this values specifying a float in the `[0,1]` range
@@ -202,6 +204,8 @@ I've noted the `min` and `max` values to illustrate the point.
 
 ### Line chart
 
+> lineplot, figure, ax
+
 The first visualization is a line chart. Using seaborn and the `lineplot` function, data is mapped describing the values of the `x` and `y` axes using the corresponding arguments.
 
 ```py
@@ -246,90 +250,49 @@ ax_line.set_ylabel("Page Views")
 
 ### Bar chart
 
-```py
+> groupby, barplot
 
+The second visualization is a bar chart, plotting the monhtly averages and separating the observations horizontally according to the year.
+
+It is necessary to group the dataframe according to the desired timeframe (month), but the project asks first to create a copy of the dataframe. This is most likely to avoid modifying the original `df`
+
+```py
+df_bar = df.copy()
 ```
 
-```py
+To group the data according to the month, use the `Grouper` function.
 
+```py
+df_bar = df_bar.groupby(pd.Grouper(freq="M"))
 ```
 
-<!--
-
-### Bar chart
-
-Map the values with a bar chart. Show average daily page views for each month, and group the columns by year. The legend should show month labels and have a title of "Months". For the chart, the label on the x axis should be "Years" and the label on the y axis should be "Average Page Views".
-
-Creating the bar chart took a lot of trial and error. Ultimately, I found a couple of different ways to create the same plot, and I"d like to detail both for posterity"s sake.
-
-#### Copy
-
-Start by copying the dataframe, to avoid altering the original one.
+Once the dataframe is "grouped", so to speak, you can highlight the groups using the `.head()` function.
 
 ```py
-df_copy = df_clean.copy()
-```
-
-#### Group
-
-The visualization needs to plot one bar for each month. To group the observations by month, use `pd.Grouper`. The function allows to resample the observations with a given frequency. In this instance, on a monthly basis.
-
-```py
-df_group = df_copy.groupby(pd.Grouper(freq="M"))
-```
-
-You can achieve a similar result using a list and the index column.
-
-```py
-df_group = df_copy.groupby([df_copy.index.year, df_copy.index.month])
-```
-
-However, this introduces a new hurdle in that the index column is no longer represented by a DatetimeIndex, but a MultiIndex.
-
-In the first instance the index is represented by a list of dates (`["2016-05-31", "2016-06-30", "2016-07-31", "2016-08-31"...`). In the second instance, by a list of tuples (`(2016, 5), (2016, 6), (2016, 7), (2016, 8),`).
-
-To later add a column for the year and month, it is more convenient to keep the date syntax.
-
-That being said, once the dataframe is "grouped", so to speak, you can highlight the groups using the `.head()` function.
-
-```py
-print(df_group.head(1))
+print(df_bar.head(1))
 """
              value
 date
 2016-05-19   19736
 2016-06-07   18335
 2016-07-01   28372
+2016-08-01   20947
+...
 """
 ```
 
 Notice how the `head()` method is not showing the elements at the top of the dataframe, but the elements at the top _of every group_: may 2016, june 2016, and so forth.
 
-Operations like `sum` now work on a group level instead of considering the entire dataframe. In other words, if `df_clean.sum()` would tally all the values, `df_group.sum()` would do so for the values of groups, distinctly.
+Operations like `sum` and `mean` now work on a group level instead of considering the entire dataframe. In other words, if `df.mean()` would consider all the values, `df_bar.mean()` would do so for the values of groups, distinctly.
 
 ```py
-print(df_clean.sum())
+print(df.mean())
 """
-value    78068463
-dtype: int64
+value    63060.147819
+dtype: float64
 """
-print(df_group.sum())
-"""
-              value
-date
-2016-05-31    97162
-2016-06-30   415627
-2016-07-31   675071
-2016-08-31   962525
-2016-09-30  1244306
-...
-"""
-```
 
-`sum`, or in the instance of the project, `mean` to compute the average.
-
-```py
-df_bar = df_group.mean()
+df_bar = df_bar.mean()
 print(df_bar)
 """
                     value
@@ -338,113 +301,137 @@ date
 2016-06-30   21875.105263
 2016-07-31   24109.678571
 2016-08-31   31049.193548
-2016-09-30   41476.866667
+...
 """
 ```
 
-That bar chart needs to distinguish the observations on the basis of the month (for the colo), and year (for the position on the `x` axis).
+This takes care of computing the averages for the month and year. It is however necessary to add two columns, to describe the month and year value separately. This is necessary to later have seaborn change the position, and color, of the bars depending on the precise values.
 
-From the grouped dataframe, you can do so using the `index`, or, alternatively, specifying a column for the date object itself.
+You can actually achieve this in one of two ways.
 
-#### Datetime index
+1. use the index
 
-Using the index, you can add the year value and the name of the month using the following syntax.
+   ```py
+   df_bar["month"] = df_bar.index.month_name()
+   df_bar["year"] = df_bar.index.year
+   ```
+
+   Since the index describes object of type date, you can describe its features with the `.year` attribute and `month_name()` function. This last one returns the full name of the month.
+
+2. reset the index and use the value of the `date` column
+
+
+    ```py
+    df_bar = df_bar.reset_index()
+    df_bar["month"] = df_bar["date"].dt.strftime("%B")
+    df_bar["year"] = df_bar["date"].dt.strftime("%Y")
+    ```
+
+    The `.dt.strftime`, while more cryptic, allows to create the same values specifying the month name, `%B` and for digit year, `%Y`.
+
+    I consider this a more "radical" approach, as it modifies the structure of the dataframe. The index is now and again a `RangeIndex`.
+
+The approaches lead a similar outcome: the dataframe has now a column for the month and one column for the year. These are included in the `barplot` function.
 
 ```py
-df_bar["month"] = df_bar.index.month_name()
-df_bar["year"] = df_bar.index.year
-print(df_bar.head(2))
-"""
-                   value month  year
-date
-2016-05-31  19432.400000   May  2016
-2016-06-30  21875.105263  June  2016
-"""
+sns.barplot(x="year", y="value", hue="month", data=df_bar)
 ```
 
-#### date column (alternative)
-
-Without using the `index`, you can actually create a dataframe in which the date is represented in its own column.
+Similarly to the line chart, a few more lines are necessary to produce the file locally.
 
 ```py
-df_bar = df_bar.reset_index()
-print(df_bar.head(2))
-"""
-        date         value
-0 2016-05-31  19432.400000
-1 2016-06-30  21875.105263
-"""
+fig_bar = plt.figure(figsize=(10, 8))
+
+sns.barplot()
+
+fig_bar.savefig(dir + "/bar_plot.png")
 ```
 
-The year and month can be then included using the `dt.strftime` construct provided by the pandas library
+Again, and similarly to the line chart, `barplot` returns the current ax. This can be used to modify the labels of the bar chart, but also the legend, to comply with the assignment and its requirements.
 
 ```py
-df_bar["month"] = df_bar["date"].dt.strftime("%B")
-df_bar["year"] = df_bar["date"].dt.strftime("%Y")
-"""
-        date         value month  year
-0 2016-05-31  19432.400000   May  2016
-1 2016-06-30  21875.105263  June  2016
-"""
+ax_bar = sns.barplot()
+
+ax_bar.set(xlabel="Years", ylabel="Average Page Views")
+ax_bar.legend(title="Months", loc="upper left")
 ```
 
-As you can see, the dataframe is eerily similar. You just need to pay attention that the `date` is represented as in the index, or in its own column.
+One last note however: in its current rendition, the bar chart maps data in a rather undesired order. Indeed, the months start at may, to end at april. This is because the first observation is for May 2016.
 
-#### barplot
-
-With the dataframe now describing the desired structure, seaborn plots a bar plot through the `barplot` function.
+To change this default, create a list for the names of the months, and use this list in the `hue_order` argument of the seaborn function.
 
 ```py
 months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-fig = plt.figure(figsize=(10, 8))
-
-# bar plot
-
-fig.savefig(dir + "/" + "./bar_plot.png")
-```
-
-`months` is included to specify the order of the legend and the order in which the bar are positioned. The rest of the code sets up a figure, which is then saved locally.
-
-For the bar plot, specify the appearance of the plot through its several, foundational attributes:
-
-```py
 sns.barplot(x="year", y="value", hue="month", hue_order=months, data=df_bar)
-```
-
-From the left:
-
-- `x="year"` allows to separate the visualization horizontally and according to the year value.
-
-- `y="value"` details the height of the bars
-
-- `hue="month"` makes it possible to distinguish the bar according to the color. Color which is associated to the month value
-
-- `hue_order=months` allows to have the bars, and the legend, start with January and end in December. Without its mention, the first month would be May, since this is the value for the first data point.
-
-This takes care of the bar plot. To change the appearance of the axes & legend, keep a reference to the current ax by storing the return value of the `barplot` function.
-
-```py
-ax = sns.barplot()
-```
-
-From this ax, you can change the axes and legend with the associated function.
-
-```py
-ax.set(xlabel="Years", ylabel="Average Page Views")
-ax.legend(title="Months", loc="upper left")
 ```
 
 ### Box plot
 
-Draw two adjacent box plots, to show how the values are distributed within a given year or month and how it compares over time. The title of the first chart should be "Year-wise Box Plot (Trend)" and the title of the second chart should be "Month-wise Box Plot (Seasonality)". Make sure the month labels on bottom start at "Jan" and the axes are labeled correctly.
+> groupby, boxplot, list comprehension
 
-## Docs
+The third visualizaton is a box plot, or rather two box plot, side by side.
 
-Docs and resources which aided the development of the project.
+The idea is to describe the values on a yearly and monthly basis, which means the dataframe mirrors much of the instructions specified for the bar chart.
 
-- [pandas read_csv](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html)
+```py
+df_box = df.copy()
+df_box["month"] = df_box.index.month_name()
+df_box["year"] = df_box.index.year
+```
 
-- [pandas quantile](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.quantile.html)
+From this structure, `boxplot` allows to create the desired visualization specifying the `x` and `y` arguments.
 
-- [pandas grouper](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html) -->
+For the years:
+
+```py
+sns.boxplot(x="year", y="value", data=df_box)
+```
+
+For the months, again with the desired order starting at January:
+
+```py
+months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+sns.boxplot(x="month", y="value", order=months, data=df_box)
+```
+
+This is enough to highlight the boxplot in a jupyter notebook,but as with the previous visualizations, matplotlib allows to recreate the plot locally.
+
+Unlike the previous visualizations, however, it is necessary to create a figure with two subplots.
+
+```py
+fig_box, axs_box = plt.subplots(1, 2, figsize=(17, 5))
+ax1, ax2 = axs_box
+
+# viz
+
+fig_box.savefig(dir + "/box_plot.png")
+```
+
+`subplots` describes a figure with one row and two columns. `ax1` and `ax2` can be then used to include the visualization in either subplot.
+
+The `boxplot` function accepts an additional argument in `ax`, which aptly links to the ax in which to plot the data.
+
+```py
+sns.boxplot(..., ax=ax1)
+sns.boxplot(..., ax=ax2)
+```
+
+`ax1` and `ax2` can be used to also modify the title/labels of either visualization. Exactly like in the previous instances.
+
+One last note is for the labels included on the `x` axis of the secon boxplot. Instead of showing the name of the month in full, the idea is to show only the first three letters (Jan instead of January, Feb, and so forth). The `xticklabels` argument allows to modify the default value, with a list of the same length.
+
+```py
+xticklabels=[m[:3] for m in months]
+```
+
+Using a list comprehension which is syntactic sugar for:
+
+```py
+mon = []
+for m in months:
+    mon.append(m[:3])
+```
+
+Using slicing notation to consider every character up to the third index (not included).
