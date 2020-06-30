@@ -79,22 +79,67 @@ For the data visualization, `scatter` accepts as argument the dimensions of the 
 plt.scatter(df["Year"], df["CSIRO Adjusted Sea Level"])
 ```
 
-I've added labels and a title, but this is not necessary to complete the project.
+I've added labels and a title to comply with the assignment, but that covers the scatter plot.
 
 ```py
-plt.title("Sea Level Rise")
+plt.title("Rise in Sea Level")
 plt.xlabel("Year")
-plt.ylabel("Adjusted Sea Level")
+plt.ylabel("Sea Level (inches)")
 ```
 
 #### Resources
 
 - [matplotlib on the `.scatter` function](https://matplotlib.org/api/_as_gen/matplotlib.pyplot.scatter.html)
 
----
+### Line of best fit
+
+Using the `scipy` library and the `linregress` function, the project asks to compute the slope and y-intercept of the _line of best fit_.
+
+```py
+regression = linregress(df["Year"], df["CSIRO Adjusted Sea Level"])
+print(regression)
+"""
+LinregressResult(slope=0.06304458401213482, intercept=-119.06594196773983, rvalue=0.9847571311825853, pvalue=3.788696979107662e-102, stderr=0.000969211871328706)
+"""
+```
+
+With this information, the assignment is to then plot the line on top of the scatter plot, and for values in the `1880-2050` range.
+
+```py
+slope, intercept, rvalue, pvalue, stderr = linregress(
+    df["Year"], df["CSIRO Adjusted Sea Level"])
+
+x0 = df["Year"][0]
+x1 = 2050
+y0 = intercept + x0 * slope
+y1 = intercept + x1 * slope
+
+plt.plot([x0, x1], [y0, y1])
+```
+
+The line shares the same color of the scatter plot, but with a few more arguments it is made more evident.
+
+```py
+plt.plot([x0, x1], [y0, y1], linewidth=2, color="red")
+```
+
+It is also not required by the assignment, but I've added a legend with a label describing the purpose of the line.
+
+```py
+plt.plot([x0, x1], [y0, y1], linewidth=2, color="red", label="Line of best fit")
+plt.legend()
+```
+
+#### Resources
+
+- [scipy tutorial on `scipy.stats`](https://docs.scipy.org/doc/scipy/reference/tutorial/stats.html)
+
+- [scipy docs for `linregress`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html)
+
+- [matplotlib on line charts with `plot`](https://matplotlib.org/3.1.0/api/_as_gen/matplotlib.pyplot.plot.html)
 
 <!--
-* Use the `linregress` function from `scipi.stats` to get the slope and y-intercept of the line of best fit. Plot the line of best fit over the top of the scatter plot. Make the line go through the year 2050 to predict the sea level rise in 2050.
+*
 * Plot a new line of best fit just using the data from year 2000 through the most recent year in the dataset. Make the line also go through the year 2050 to predict the sea level rise in 2050 if the rate of rise continues as it has since the year 2000.
 * The x label should be "Year", the y label should be "Sea Level (inches)", and the title should be "Rise in Sea Level".
 
