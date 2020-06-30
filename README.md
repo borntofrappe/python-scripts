@@ -20,3 +20,4 @@
 | [matplotlib-line](https://repl.it/@borntofrappe/matplotlib-line)                         | Plot data from Google Trends with a line chart and matplotlib                        | matplotlib, pandas                    |
 | [medical-data-visualizer](https://repl.it/@borntofrappe/fcc-medical-data-visualizer)     | Visualize and make calculations from medical examination data.                       | pandas, matplotlib, seaborn           |
 | [time-series-visualizer](https://repl.it/@borntofrappe/fcc-time-series-visualizer)       | Visualize time series data using a line plot, bar plot, and box plots.               | pandas, matplotlib, seaborn           |
+| sea-level-predictor                                                                      | Predict the sea level change through years and up until 2050.                        | pandas, matplotlib, scipy             |
