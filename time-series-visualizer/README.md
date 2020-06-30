@@ -10,7 +10,7 @@ The note introducing other projects for the freeCodeCamp certification is repeat
 
 ## Assignment
 
-The project asks to take the `.csv` data describing traffic to the freeCodeCamp forum, between May 2016 and December 2019, and map the time series with a line chart, a bar chart and a box plot. Each visualization has its own distinct merit, be it the analysis of the growth, of the averages, of the trends.
+The project asks to take the `.csv` data describing traffic to the freeCodeCamp forum, between May 2016 and December 2019, and map the time series with a line plot, a bar plot and a box plot. Each visualization has its own distinct merit, be it the analysis of the growth, of the averages, of the trends.
 
 ## Development
 
@@ -64,7 +64,7 @@ folder/file
 
 Since the project is interested in just reading/saving files to the directory, it seems less than necessary to include the step.
 
-##### Docs
+##### Reference
 
 - [os module](https://docs.python.org/3/library/os.html)
 
@@ -155,6 +155,10 @@ date
 """
 ```
 
+#### Reference
+
+- [pandas on read_csv](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html)
+
 ### Clean data
 
 > quantile
@@ -202,11 +206,11 @@ max    177588.00000
 
 I've noted the `min` and `max` values to illustrate the point.
 
-### Line chart
+### Line plot
 
 > lineplot, figure, ax
 
-The first visualization is a line chart. Using seaborn and the `lineplot` function, data is mapped describing the values of the `x` and `y` axes using the corresponding arguments.
+The first visualization is a line plot. Using seaborn and the `lineplot` function, data is mapped describing the values of the `x` and `y` axes using the corresponding arguments.
 
 ```py
 import seaborn as sns
@@ -214,7 +218,7 @@ import seaborn as sns
 sns.lineplot(x=df.index, y=df_clean["value"])
 ```
 
-This would be enough to show the line in a jupyter notebook. However, to create the chart locally, and to also have more control on the aesthetics of the visualization, it is necessary to use matplotlib.
+This would be enough to show the line in a jupyter notebook. However, to create the plot locally, and to also have more control on the aesthetics of the visualization, it is necessary to use matplotlib.
 
 ```py
 import matplotlib.pyplot as plt
@@ -228,7 +232,7 @@ fig_line.savefig(dir + "/line_plot.png")
 
 The seaborn function operates on the current ax, and in the figure created by matplotlib.
 
-To change the title of the line chart, and the labels included on either axis, you can leverage the fact that `sns.lineplot` returns the ax on which the visualization is created.
+To change the title of the line plot, and the labels included on either axis, you can leverage the fact that `sns.lineplot` returns the ax on which the visualization is created.
 
 ```py
 ax_line = sns.lineplot()
@@ -248,11 +252,15 @@ ax_line.set_xlabel("Date")
 ax_line.set_ylabel("Page Views")
 ```
 
-### Bar chart
+#### Reference
+
+- [seaborn on lineplot](http://seaborn.pydata.org/generated/seaborn.lineplot.html#seaborn.lineplot)
+
+### Bar plot
 
 > groupby, barplot
 
-The second visualization is a bar chart, plotting the monhtly averages and separating the observations horizontally according to the year.
+The second visualization is a bar plot, plotting the monhtly averages and separating the observations horizontally according to the year.
 
 It is necessary to group the dataframe according to the desired timeframe (month), but the project asks first to create a copy of the dataframe. This is most likely to avoid modifying the original `df`
 
@@ -337,7 +345,7 @@ The approaches lead a similar outcome: the dataframe has now a column for the mo
 sns.barplot(x="year", y="value", hue="month", data=df_bar)
 ```
 
-Similarly to the line chart, a few more lines are necessary to produce the file locally.
+Similarly to the line plot, a few more lines are necessary to produce the file locally.
 
 ```py
 fig_bar = plt.figure(figsize=(10, 8))
@@ -347,7 +355,7 @@ sns.barplot()
 fig_bar.savefig(dir + "/bar_plot.png")
 ```
 
-Again, and similarly to the line chart, `barplot` returns the current ax. This can be used to modify the labels of the bar chart, but also the legend, to comply with the assignment and its requirements.
+Again, and similarly to the line plot, `barplot` returns the current ax. This can be used to modify the labels of the bar plot, but also the legend, to comply with the assignment and its requirements.
 
 ```py
 ax_bar = sns.barplot()
@@ -356,7 +364,7 @@ ax_bar.set(xlabel="Years", ylabel="Average Page Views")
 ax_bar.legend(title="Months", loc="upper left")
 ```
 
-One last note however: in its current rendition, the bar chart maps data in a rather undesired order. Indeed, the months start at may, to end at april. This is because the first observation is for May 2016.
+One last note however: in its current rendition, the bar plot maps data in a rather undesired order. Indeed, the months start at may, to end at april. This is because the first observation is for May 2016.
 
 To change this default, create a list for the names of the months, and use this list in the `hue_order` argument of the seaborn function.
 
@@ -366,13 +374,19 @@ months = ["January", "February", "March", "April", "May", "June", "July", "Augus
 sns.barplot(x="year", y="value", hue="month", hue_order=months, data=df_bar)
 ```
 
+#### Reference
+
+- [pandas on grouper](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html)
+
+- [seaborn on barplot](https://seaborn.pydata.org/generated/seaborn.barplot.html)
+
 ### Box plot
 
 > groupby, boxplot, list comprehension
 
 The third visualizaton is a box plot, or rather two box plot, side by side.
 
-The idea is to describe the values on a yearly and monthly basis, which means the dataframe mirrors much of the instructions specified for the bar chart.
+The idea is to describe the values on a yearly and monthly basis, which means the dataframe mirrors much of the instructions specified for the bar plot.
 
 ```py
 df_box = df.copy()
@@ -435,3 +449,7 @@ for m in months:
 ```
 
 Using slicing notation to consider every character up to the third index (not included).
+
+#### Reference
+
+- [seaborn on boxplot](https://seaborn.pydata.org/generated/seaborn.boxplot.html)

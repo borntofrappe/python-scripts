@@ -14,8 +14,8 @@ upper_threshold = df["value"].quantile(0.975)
 
 df = df[(df["value"] > lower_threshold) & (df["value"] < upper_threshold)]
 
-# LINE CHART
-print("Creating line chart")
+# LINE PLOT
+print("Creating line plot")
 fig_line = plt.figure(figsize=(15, 5))
 ax_line = sns.lineplot(x=df.index, y=df["value"])
 ax_line.set(title="Daily freeCodeCamp Forum Page Views 5/2016-12/2019",
@@ -24,12 +24,11 @@ ax_line.set(title="Daily freeCodeCamp Forum Page Views 5/2016-12/2019",
 fig_line.savefig(dir + "/line_plot.png")
 print("See **line_plot.png**")
 
-# BAR CHART
-print("Prepping data for the bar chart")
+# BAR PLOT
+print("Prepping data for the bar plot")
 df_bar = df.copy()
 df_bar = df_bar.groupby(pd.Grouper(freq="M"))
 df_bar = df_bar.mean()
-
 
 df_bar["month"] = df_bar.index.month_name()
 df_bar["year"] = df_bar.index.year
@@ -44,7 +43,7 @@ df_bar["year"] = df_bar["date"].dt.strftime("%Y")
 months = ["January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"]
 
-print("Creating bar chart")
+print("Creating bar plot")
 fig_bar = plt.figure(figsize=(10, 8))
 
 
