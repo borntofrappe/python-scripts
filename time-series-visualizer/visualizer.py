@@ -8,7 +8,7 @@ register_matplotlib_converters()
 dir = os.path.dirname(os.path.realpath(__file__))
 
 # Import data (Make sure to parse dates. Consider setting index column to "date".)
-df = pd.read_csv(dir + "/" + "data.csv",
+df = pd.read_csv(dir + "/data.csv",
                  index_col="date", parse_dates=["date"])
 
 # Clean data
@@ -20,13 +20,13 @@ df = df[(df["value"] > lower_threshold) &
 
 def draw_line_plot():
     # Draw line plot
-    fig = plt.figure(figsize=(16, 5))
+    fig = plt.figure(figsize=(15, 5))
     ax = sns.lineplot(x=df.index, y=df["value"])
     ax.set(title="Daily freeCodeCamp Forum Page Views 5/2016-12/2019",
            xlabel="Date", ylabel="Page Views")
 
     # Save image and return fig (don"t change this part)
-    fig.savefig(dir + "/" + "./line_plot.png")
+    fig.savefig(dir + "/line_plot.png")
     return fig
 
 
