@@ -143,7 +143,7 @@ plt.legend()
 The final request of the assignment is to plot yet another line of best fit, considering a subset of the original data, and more specifically starting with the year 2000.
 
 ```py
-df_recent = df[df["Year"] >= 2000]
+df_2000 = df[df["Year"] >= 2000]
 ```
 
 With the new column, it is a matter of repeating the computations used for the first line chart. However, one modification is with the way `x1` is computed. It is actually valid for the first line as well: using the previous syntax
@@ -175,3 +175,103 @@ With this in mind, the new line of best fit repeats the exact same computations 
 #### Reference
 
 - [pandas iloc](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.iloc.html)
+
+### Debugging
+
+Running the script against the testing suite raises the following error:
+
+```bash
+Traceback (most recent call last):
+  File "/home/runner/fcc-sea-level-predictor/test_module.py", line 34, in test_plot_lines
+    self.assertEqual(actual, expected, "Expected different line for first line of best fit.")
+AssertionError: Lists differ: [-0.5421240249263661, 10.175455257136548] != [-0.5421240249263661, -0.4790794409142336, -0.41603485690208686[3235 chars]2443]
+```
+
+In its rather convoluted syntax, the message points to the `test_plot_lines` in `test_module.py`, where the function compares a series of variables against hard-coded values. The message points specifically to the coordinates of the line of best fit, as returned by the syntax `ax.get_lines()[0].get_ydata().tolist()`.
+
+Considering it one step at a time:
+
+- `ax.get_lines()` returns a list of the lines mapped the ax
+
+  ```py
+  ax = sea_level_predictor.draw_plot()
+
+  lines = ax.get_lines()
+  print(lines)
+  """
+  <a list of 2 Line2D objects>
+  """
+  ```
+
+  `lines[0]` refers to the first line, detailing the `Line2D(Line of best fit 1880-2050)` object
+
+- the `.get_ydata()` function returns a list of the coordinates on the `y` axis
+
+  ```py
+  ydata = lines[0].get_ydata()
+  print(ydata)
+  """
+  [-0.54212402 10.17545526]
+  """
+  ```
+
+  You might already see the problem, but first, to finish the syntax of the test
+
+- `.tolist()` returns the data in a list structure
+
+  ```py
+  print(ydata.tolist())
+  """
+  [-0.5421240249263661, 10.175455257136548]
+  """
+  ```
+
+Comparing the list to the hard-coded one, the error becomes obvious.
+
+```py
+expected = [-0.5421240249263661, -0.4790794409142336, -0.41603485690208686, -0.3529902728899543, -0.2899456888778218, -0.22690110486568926, -0.16385652085355673, -0.1008119368414242,
+...]
+```
+
+The line is plotted using only two points, while the test considers one point for each year in the `1880-2050` range. It's not an inherent problem with the visualization, and more of a different way to draw the same chart.
+
+Instead of using two points:
+
+```py
+x1 = int(df.iloc[0]["Year"])
+x2 = 2050
+y1 = intercept + x1 * slope
+y2 = intercept + x2 * slope
+```
+
+Build two lists for the values in the`x` and `y` dimensions.
+
+```py
+x = [year + x1 for year in range(x2 - x1)]
+y = [intercept + year * slope for year in x]
+```
+
+I've used a list comprehensions as a syntactic sugar, but you can achieve a similar result as follows:
+
+```py
+x = []
+for year in range(x2 - x1):
+  x.append(year + x1)
+
+y = []
+for year in x:
+  y.append(intercept + year * slope)
+```
+
+With the data structures, the line is then plotted as follows:
+
+```py
+plt.plot(x, y)
+```
+
+**One key difference**: the new method maps data in the `1880-2050` range, excluding the year `2050`. It seems this is exactly what the test expects, as the last value in the hard coded array matches the value for `2049`.
+
+| Year | Value              |
+| ---- | ------------------ |
+| 2049 | 10.11241067312443  |
+| 2050 | 10.175455257136548 |
